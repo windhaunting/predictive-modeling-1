@@ -17,3 +17,16 @@ class predictLR:
 
     def readInputData(self, inputFile):
         x = 1
+        
+        
+        
+
+
+def main():
+    
+    gcObj = graphCreationClass()
+    gcObj.createNodeIdPlaces()    
+    print ('len graphCreationClass edgelist: ', len(graphCreationClass.edgeList))
+    
+if __name__== "__main__":
+  main()
