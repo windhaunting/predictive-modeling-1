@@ -86,11 +86,11 @@ class predictLR:
         #df["Product_ID"] = get_series_ids(df["Product_ID"])
         #df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
         #df['Product_ID'] = df['Product_ID'].astype('str').apply(lambda x: x[1:]).astype(int)         # it works
-        labelsProd, levels  = pd.factorize(df['Product_ID'])
+        labelsProd, levels  = pd.factorize(df['Product_ID'])         #not correct here?  remove this feature or use dummy 
         #df['Product_ID'] = pd.to_numeric(df['Product_ID'])
         df['Product_ID'] = labelsProd
         #drop na
-        labelsStYear, levels  = pd.factorize(df['Stay_In_Current_City_Years'])
+        labelsStYear, levels  = pd.factorize(df['Stay_In_Current_City_Years'])        #can not factorize? affect test accuracy
         df['Stay_In_Current_City_Years'] = labelsProd
 
         
@@ -151,6 +151,7 @@ class predictLR:
         
     def trainModel(self,df):
         trainX = df.drop(['Purchase'], axis=1) 
+        
         trainY = df.Purchase
         lm = linear_model.LinearRegression()
 
@@ -158,7 +159,7 @@ class predictLR:
         print("Estimated intercept and coeff: ", lm.intercept_, len(lm.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
-        featureCoeffDf = pd.DataFrame(list(zip(df.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
+        featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
         
     
