@@ -15,3 +15,5 @@ class predictLR:
       pass
 
 
+    def readInputData(self, inputFile):
+        x = 1
