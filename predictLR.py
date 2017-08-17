@@ -34,12 +34,16 @@ class predictLR:
       pass
 
 
-    def readInputData(self, inputFile):
+    def readAnalyseInputData(self, inputFile):
         df = pd.read_csv(inputFile)
         #print ("df: ", df.head())
         print ("cnt: ", df["Gender"].value_counts())
         print(df['Purchase'].describe())
-        df['Purchase'].plot.bar()
+        #df['Purchase'].plot.bar()
+        
+        for col in df:
+            print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
+            
     def trainModel(self):
         x = 1
         
@@ -50,7 +54,7 @@ class predictLR:
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
-    preLRObj.readInputData(inputFile)
+    preLRObj.readAnalyseInputData(inputFile)
     
 if __name__== "__main__":
   main()
