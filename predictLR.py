@@ -24,12 +24,14 @@ Output the results
 # pandas usage reference:
 #    http://nbviewer.jupyter.org/urls/bitbucket.org/hrojas/learn-pandas/raw/master/lessons/01%20-%20Lesson.ipynb
 
+#http://bigdata-madesimple.com/how-to-run-linear-regression-in-python-scikit-learn/
 
 from sklearn import linear_model
 import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+
 
 class predictLR:
  
@@ -48,17 +50,17 @@ class predictLR:
         #show NaN ratio
         #for col in df:
         #    print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
-        print ("nan: ", len(df), (len(df)-df.count())/len(df))
+        #print ("nan: ", len(df), (len(df)-df.count())/len(df))
         
         #show unique 
-        print ('unq: ', len(df.Product_Category_3.unique()))
+        #print ('unq: ', len(df.Product_Category_3.unique()))
         
         #drop column
         df = df.drop(['Product_Category_3'], axis=1) 
         
         #drop na
         df = df.dropna()
-        print ("nan2: ", len(df), (len(df)-df.count())/len(df))
+        #print ("nan2: ", len(df), (len(df)-df.count())/len(df))
         
         return df
     def plotExploreData(self, df):
@@ -109,15 +111,18 @@ class predictLR:
         axes[0,0].set_title('Age')
         axes[0,1].set_title('Occupation')
 
-    def trainModel(self):
-        trainX = 0
-        trainY = 0   
-        regr = linear_model.LinearRegression()
-
-        regr.fit(trainX, trainY)
-
         
+    def trainModel(self,df):
+        trainX = df.drop(['Purchase'], axis=1) 
+        trainY = df.Purchase
+        lm = linear_model.LinearRegression()
+
+        lm.fit(trainX, trainY)
+        print("Estimated intercept coeff: ", lm.intercept_)
         
+        #construct a data frame that contains features and estimated coefficients.
+        pd.DataFrame(zip(df.columns, lm.coef_), columns = ["feature", "estimatedCoeffcients"])
+
         
     
 
@@ -125,7 +130,8 @@ def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readCleanInputData(inputFile)
-    preLRObj.plotExploreData(df)
+    #preLRObj.plotExploreData(df)
+    preLRObj.trainModel(df)
     
 if __name__== "__main__":
   main()
