@@ -42,30 +42,35 @@ class predictLR:
 
     def readCleanInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        print ("df: ", df.head())
+        print ("readCleanInputData df head: ", df.head())
         
         for col in df.columns:
-            print ("unique: ", col, len(df[col].unique()))
+            print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
-        print(df['Purchase'].describe())
+        print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
         #show NaN ratio
         #for col in df:
-        #    print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
-        #print ("nan: ", len(df), (len(df)-df.count())/len(df))
+        #    print ('readCleanInputData col: ' , col, ": ", df[col].value_counts(dropna=False))
+        #print ("readCleanInputDatanan: ", len(df), (len(df)-df.count())/len(df))
         
         #show unique 
-        #print ('unq: ', len(df.Product_Category_3.unique()))
+        #print ('readCleanInputDataunq: ', len(df.Product_Category_3.unique()))
         
         #drop column
         df = df.drop(['Product_Category_3'], axis=1) 
         
         #drop na
         df = df.dropna()
-        #print ("nan2: ", len(df), (len(df)-df.count())/len(df))
+        #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         
+        #crete dummy variable
+        dfGender = pd.get_dummies(df['Gender'])
+        df = df.join(dfGender)
+        print ("readCleanInputData df head2: ", df.head())
+
         return df
     def plotExploreData(self, df):
         
