@@ -87,20 +87,28 @@ class predictLR:
         plt.show()
         '''
         
+        '''
         print ("matplotlib.__version__: ", matplotlib.__version__)
 
         df.plot(x='Age', y='Purchase', style = 'o')
         plt.xlabel('Age')
         plt.show()
         
-        
         plt.figure()
         plt.scatter(df['Occupation'], df['Purchase'])
         plt.xlabel('Occupation')
 
         plt.show()
+        '''
         
-        
+        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 10))
+        fig.subplots_adjust(hspace=1.0) ## Create space between plots
+        df.plot(x='Age', y='Purchase', ax = axes[0,0])
+        df.plot(x='Occupation', y='Purchase', ax = axes[0,1], style = 'o')
+        # Add titles
+        axes[0,0].set_title('Age')
+        axes[0,1].set_title('Occupation')
+
     def trainModel(self):
         x = 1
         
