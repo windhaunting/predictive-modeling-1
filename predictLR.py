@@ -118,7 +118,7 @@ class predictLR:
         lm = linear_model.LinearRegression()
 
         lm.fit(trainX, trainY)
-        print("Estimated intercept coeff: ", lm.intercept_)
+        print("Estimated intercept and coeff: ", lm.intercept_, len(lm.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
         pd.DataFrame(zip(df.columns, lm.coef_), columns = ["feature", "estimatedCoeffcients"])
