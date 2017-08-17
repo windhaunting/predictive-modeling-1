@@ -42,7 +42,7 @@ class predictLR:
 
     def readCleanInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        print ("readCleanInputData df head: ", df.head())
+        print ("readCleanInputData df head: ", df.head(), df.dtypes)
         
         for col in df.columns:
             print ("readCleanInputDataunique: ", col, len(df[col].unique()))
@@ -68,7 +68,7 @@ class predictLR:
         
         #crete dummy variable   #or use scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
-        df = df.drop(['dfGender'], axis=1) 
+        df = df.drop(['Gender'], axis=1) 
         
         dfMarital = pd.get_dummies(df['Marital_Status'])
         df = df.drop(['Marital_Status'], axis=1) 
@@ -83,7 +83,9 @@ class predictLR:
 
         df = df.join([dfGender, dfCity, dfMarital, dfAge])
         
-        print ("readCleanInputData df head2: ", df.head())
+        #tranfer to float for object type
+        df = df.apply(pd.to_numeric, errors='ignore')
+        print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df
     def plotExploreData(self, df):
