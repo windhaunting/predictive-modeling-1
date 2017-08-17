@@ -33,7 +33,8 @@ class predictLR:
 
     def readInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        print ("df: ", df)
+        print ("df: ", df.head())
+        print ("cnt: ", df["Gender"].value_counts())
         
     def trainModel(self):
         x = 1
