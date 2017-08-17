@@ -32,6 +32,7 @@ import matplotlib.pyplot as plt
 
 class predictLR:
  
+    
     def __init__(self):
       pass
 
@@ -57,17 +58,21 @@ class predictLR:
         #drop na
         df = df.dropna()
         print ("nan2: ", len(df), (len(df)-df.count())/len(df))
-
-    def plotExploreData():
+        
+        return df
+    def plotExploreData(self, df):
+        
         # specifies the parameters of our graphs
         fig = plt.figure(figsize=(18,6), dpi=1600) 
         alpha=alpha_scatterplot = 0.2 
         alpha_bar_chart = 0.55
         
         #plot many diffrent shaped graphs together 
+        print ("cnt: ", df["Purchase"].value_counts())
+
         ax1 = plt.subplot2grid((2,3),(0,0))
-        df.Purchase.value_counts().plot(kind='bar', alpha=alpha_bar_chart)
-        ax1.set_xlim(-1, 2)
+        df.Purchase.value_counts().plot(figsize=(15,5))
+        ax1.set_xlim(-1, len(df.Purchase.value_counts()))
         plt.title("Distribution of Purchase")
         plt.show()
         
@@ -81,7 +86,8 @@ class predictLR:
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
-    preLRObj.readCleanInputData(inputFile)
+    df = preLRObj.readCleanInputData(inputFile)
+    preLRObj.plotExploreData(df)
     
 if __name__== "__main__":
   main()
