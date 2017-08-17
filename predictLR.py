@@ -68,13 +68,25 @@ class predictLR:
         alpha_bar_chart = 0.55
         
         #plot many diffrent shaped graphs together 
-        print ("cnt: ", df["Purchase"].value_counts())
-
+        # distribution of histogram
+        print ("cnt: ", df["Purchase"].value_counts().sort_values())
         ax1 = plt.subplot2grid((2,3),(0,0))
         df.Purchase.value_counts().plot(figsize=(15,5))
         ax1.set_xlim(-1, len(df.Purchase.value_counts()))
         plt.title("Distribution of Purchase")
+        
+        plt.subplot2grid((2,3),(0,1))
+        df['Purchase'].plot(figsize=(15,5));
+
+
+        plt.subplot2grid((2,3),(0,2))
+        plt.scatter(df.Occupation, df.Purchase, alpha=alpha_scatterplot)
+        plt.ylabel("Purchase")
         plt.show()
+        
+        
+        plt.scatter(df.Age, df.Purchase, alpha=alpha_scatterplot)
+
         
     def trainModel(self):
         x = 1
