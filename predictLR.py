@@ -27,6 +27,7 @@ Output the results
 
 from sklearn import linear_model
 import pandas as pd
+import numpy as np
 
 class predictLR:
  
@@ -36,13 +37,15 @@ class predictLR:
 
     def readAnalyseInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        #print ("df: ", df.head())
+        print ("df: ", df.head())
         print ("cnt: ", df["Gender"].value_counts())
         print(df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
-        for col in df:
-            print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
+        #show NaN ratio
+        #for col in df:
+        #    print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
+        print ("nan: ", (len(df)-df.count())/len(df))
             
     def trainModel(self):
         x = 1
