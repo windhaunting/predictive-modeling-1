@@ -44,3 +44,5 @@ def get_series_ids(x):
     values = np.unique(x)
     values2nums = dict(zip(values,range(len(values))))
     return x.replace(values2nums)
+
+

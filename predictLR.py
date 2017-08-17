@@ -63,10 +63,7 @@ class predictLR:
         #drop column
         df = df.drop(['Product_Category_3'], axis=1) 
         
-        #drop na
-        df = df.dropna()
-        #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
-        
+
         #crete dummy variable   #or df factorize();    vs scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
         df = df.drop(['Gender'], axis=1) 
@@ -88,10 +85,14 @@ class predictLR:
         #df = df.apply(pd.to_numeric, errors='ignore')
         #df["Product_ID"] = get_series_ids(df["Product_ID"])
         #df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
-        df['Product_ID'] = df['Product_ID'].astype(int)
-        
+        #df['Product_ID'] = df['Product_ID'].astype('str').apply(lambda x: x[1:]).astype(int)         # it works
+        labels, levels  = pd.factorize(df['Product_ID'])
         #df['Product_ID'] = pd.to_numeric(df['Product_ID'])
-
+        df['Product_ID'] = labels
+        #drop na
+        df = df.dropna()
+        #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
+        print ("readCleanInputData df labels: ", labels, levels)
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df
