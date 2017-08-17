@@ -89,11 +89,18 @@ class predictLR:
         
         print ("matplotlib.__version__: ", matplotlib.__version__)
 
-        
-        #fig = plt.figure()
         df.plot(x='Age', y='Purchase', style = 'o')
+        plt.xlabel('Age')
         plt.show()
-    
+        
+        
+        plt.figure()
+        plt.scatter(df['Occupation'], df['Purchase'])
+        plt.xlabel('Occupation')
+
+        plt.show()
+        
+        
     def trainModel(self):
         x = 1
         
