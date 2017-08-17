@@ -32,6 +32,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
+from commons import get_series_ids
 
 class predictLR:
  
@@ -84,7 +85,10 @@ class predictLR:
         df = df.join([dfGender, dfCity, dfMarital, dfAge])
         
         #tranfer to float for object type
-        df = df.apply(pd.to_numeric, errors='ignore')
+        #df = df.apply(pd.to_numeric, errors='ignore')
+        #df["Product_ID"] = get_series_ids(df["Product_ID"])
+        df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
+
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df

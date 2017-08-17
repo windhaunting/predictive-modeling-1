@@ -6,6 +6,7 @@ Created on Wed Dec 21 11:52:41 2016
 """
 
 import csv
+import numpy as np
 
 #read file
 def mycsv_reader(csv_reader):         #
