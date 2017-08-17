@@ -62,6 +62,7 @@ class predictLR:
         return df
     def plotExploreData(self, df):
         
+        '''
         # specifies the parameters of our graphs
         fig = plt.figure(figsize=(18,6), dpi=1600) 
         alpha=alpha_scatterplot = 0.2 
@@ -83,9 +84,9 @@ class predictLR:
         plt.scatter(df.Occupation, df.Purchase, alpha=alpha_scatterplot)
         plt.ylabel("Purchase")
         plt.show()
+        '''
         
-        
-        plt.scatter(df.Age, df.Purchase, alpha=alpha_scatterplot)
+        plt.scatter(df.Age, df.Purchase, alpha=0.55)
 
         
     def trainModel(self):
