@@ -69,7 +69,7 @@ class predictLR:
         df = df.drop(['Gender'], axis=1) 
         
         dfMarital = pd.get_dummies(df['Marital_Status'])
-        df = df.drop(['Marital_Status'], axis=1) 
+        df = df.drop(['Marital_Status'], axis = 1)
         
         dfAge = pd.get_dummies(df['Age'])
         df = df.drop(['Age'], axis=1) 
