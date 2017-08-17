@@ -86,13 +86,17 @@ class predictLR:
         #df["Product_ID"] = get_series_ids(df["Product_ID"])
         #df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
         #df['Product_ID'] = df['Product_ID'].astype('str').apply(lambda x: x[1:]).astype(int)         # it works
-        labels, levels  = pd.factorize(df['Product_ID'])
+        labelsProd, levels  = pd.factorize(df['Product_ID'])
         #df['Product_ID'] = pd.to_numeric(df['Product_ID'])
-        df['Product_ID'] = labels
+        df['Product_ID'] = labelsProd
         #drop na
+        labelsStYear, levels  = pd.factorize(df['Stay_In_Current_City_Years'])
+        df['Stay_In_Current_City_Years'] = labelsProd
+
+        
         df = df.dropna()
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
-        print ("readCleanInputData df labels: ", labels, levels)
+        #print ("readCleanInputData df labels: ", labels, levels)
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df
