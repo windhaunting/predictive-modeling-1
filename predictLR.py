@@ -110,7 +110,12 @@ class predictLR:
         axes[0,1].set_title('Occupation')
 
     def trainModel(self):
-        x = 1
+        trainX = 0
+        trainY = 0   
+        regr = linear_model.LinearRegression()
+
+        regr.fit(trainX, trainY)
+
         
         
         
