@@ -161,7 +161,7 @@ class predictLR:
         #construct a data frame that contains features and estimated coefficients.
         featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
-        
+        print ("trainModel r2 score: ", lm.score(trainX, trainY)
     
 
 def main():
