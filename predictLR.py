@@ -66,9 +66,23 @@ class predictLR:
         df = df.dropna()
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         
-        #crete dummy variable
+        #crete dummy variable   #or use scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
-        df = df.join(dfGender)
+        df = df.drop(['dfGender'], axis=1) 
+        
+        dfMarital = pd.get_dummies(df['Marital_Status'])
+        df = df.drop(['Marital_Status'], axis=1) 
+        
+        dfAge = pd.get_dummies(df['Age'])
+        df = df.drop(['Age'], axis=1) 
+        
+        dfCity = pd.get_dummies(df['City_Category'])
+        df = df.drop(['City_Category'], axis=1) 
+        #dfProd1 = pd.get_dummies(df['Product_Category_1'])
+        #dfProd2 = pd.get_dummies(df['Product_Category_2'])
+
+        df = df.join([dfGender, dfCity, dfMarital, dfAge])
+        
         print ("readCleanInputData df head2: ", df.head())
 
         return df
