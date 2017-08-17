@@ -49,7 +49,7 @@ class predictLR:
             print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
-        print("readCleanInputData: pur: ", df['Purchase'].describe())
+        #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
         #show NaN ratio
@@ -149,7 +149,8 @@ class predictLR:
         axes[0,1].set_title('Occupation')
 
         
-    def trainModel(self,df):
+    #use data df to train model;  data[-1] is the train ground truth y values
+    def trainModelData(self,df):
         trainX = df.drop(['Purchase'], axis=1) 
         
         trainY = df.Purchase
@@ -161,15 +162,32 @@ class predictLR:
         #construct a data frame that contains features and estimated coefficients.
         featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
-        print ("trainModel r2 score: ", lm.score(trainX, trainY)
-    
+        print ("trainModel r2 score: ", lm.score(trainX, trainY))
 
+        return lm
+    
+    #split original input data to tain and test data to do cross validation etc
+    def validationModel(self, df):
+        x = 1
+    
+    
+    #final test output for the previous trained model
+    def testOutputModel(self, testInFile, lm):
+        df = self.readCleanInputData(testInFile)
+        testX = df                               #.drop(['Purchase'], axis=1) 
+        #testYReal = df['Purchase']
+        testYEstimate = lm.predict(testX)
+        print ("testOutputModel testYEstimate : ", testYEstimate)
+
+        
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readCleanInputData(inputFile)
     #preLRObj.plotExploreData(df)
-    preLRObj.trainModel(df)
+    lm = preLRObj.trainModelData(df)
     
+    testInFile = "../input_data1/test.csv"
+    preLRObj.testOutputModel(testInFile, lm)
 if __name__== "__main__":
   main()
