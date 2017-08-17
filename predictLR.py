@@ -43,7 +43,11 @@ class predictLR:
     def readCleanInputData(self, inputFile):
         df = pd.read_csv(inputFile)
         print ("df: ", df.head())
-        print ("cnt: ", df["Gender"].value_counts(), df.Gender.unique())
+        
+        for col in df.columns:
+            print ("unique: ", col, len(df[col].unique()))
+            #print ("val_count:", df[col].value_counts())
+        
         print(df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
