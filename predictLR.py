@@ -158,8 +158,8 @@ class predictLR:
         print("Estimated intercept and coeff: ", lm.intercept_, len(lm.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
-        pd.DataFrame(zip(df.columns, lm.coef_), columns = ["feature", "estimatedCoeffcients"])
-
+        featureCoeffDf = pd.DataFrame(list(zip(df.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
+        print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
         
     
 
