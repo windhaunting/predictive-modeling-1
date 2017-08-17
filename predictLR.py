@@ -28,6 +28,7 @@ Output the results
 from sklearn import linear_model
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 class predictLR:
  
@@ -35,7 +36,7 @@ class predictLR:
       pass
 
 
-    def readAnalyseInputData(self, inputFile):
+    def readCleanInputData(self, inputFile):
         df = pd.read_csv(inputFile)
         print ("df: ", df.head())
         print ("cnt: ", df["Gender"].value_counts())
@@ -45,8 +46,31 @@ class predictLR:
         #show NaN ratio
         #for col in df:
         #    print (' col: ' , col, ": ", df[col].value_counts(dropna=False))
-        print ("nan: ", (len(df)-df.count())/len(df))
-            
+        print ("nan: ", len(df), (len(df)-df.count())/len(df))
+        
+        #show unique 
+        print ('unq: ', len(df.Product_Category_3.unique()))
+        
+        #drop column
+        df = df.drop(['Product_Category_3'], axis=1) 
+        
+        #drop na
+        df = df.dropna()
+        print ("nan2: ", len(df), (len(df)-df.count())/len(df))
+
+    def plotExploreData():
+        # specifies the parameters of our graphs
+        fig = plt.figure(figsize=(18,6), dpi=1600) 
+        alpha=alpha_scatterplot = 0.2 
+        alpha_bar_chart = 0.55
+        
+        #plot many diffrent shaped graphs together 
+        ax1 = plt.subplot2grid((2,3),(0,0))
+        df.Purchase.value_counts().plot(kind='bar', alpha=alpha_bar_chart)
+        ax1.set_xlim(-1, 2)
+        plt.title("Distribution of Purchase")
+        plt.show()
+        
     def trainModel(self):
         x = 1
         
@@ -57,7 +81,7 @@ class predictLR:
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
-    preLRObj.readAnalyseInputData(inputFile)
+    preLRObj.readCleanInputData(inputFile)
     
 if __name__== "__main__":
   main()
