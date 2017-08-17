@@ -19,7 +19,10 @@ Plotting results
 --Valuation of the Analysis
 K-folds cross validation to valuate results locally
 Output the results
+
 '''
+# pandas usage reference:
+#    http://nbviewer.jupyter.org/urls/bitbucket.org/hrojas/learn-pandas/raw/master/lessons/01%20-%20Lesson.ipynb
 
 
 from sklearn import linear_model
@@ -33,9 +36,10 @@ class predictLR:
 
     def readInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        print ("df: ", df.head())
+        #print ("df: ", df.head())
         print ("cnt: ", df["Gender"].value_counts())
-        
+        print(df['Purchase'].describe())
+        df['Purchase'].plot.bar()
     def trainModel(self):
         x = 1
         
