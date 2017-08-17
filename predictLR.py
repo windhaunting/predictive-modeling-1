@@ -8,6 +8,20 @@ Created on Wed Aug 16 20:03:30 2017
 
 #black friday purchase amount prediction
 #using linear regression
+'''
+--Data Handling
+Importing Data with Pandas
+Cleaning Data
+Exploring Data through Visualizations with Matplotlib
+--Data Analysis
+Linear Regression Model here
+Plotting results
+--Valuation of the Analysis
+K-folds cross validation to valuate results locally
+Output the results
+'''
+
+
 from sklearn import linear_model
 import pandas as pd
 
