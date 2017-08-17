@@ -86,8 +86,8 @@ class predictLR:
         plt.show()
         '''
         
-        plt.scatter(df['Age'], df['Purchase'])
-        plt.show()
+        df.plot(df['Age'], df['Purchase'])
+        #plt.show()
         
     def trainModel(self):
         x = 1
