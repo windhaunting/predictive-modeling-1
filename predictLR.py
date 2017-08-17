@@ -67,7 +67,7 @@ class predictLR:
         df = df.dropna()
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         
-        #crete dummy variable   #or use scikit-learn preprocessing.LabelEncoder
+        #crete dummy variable   #or df factorize();    vs scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
         df = df.drop(['Gender'], axis=1) 
         
@@ -87,7 +87,10 @@ class predictLR:
         #tranfer to float for object type
         #df = df.apply(pd.to_numeric, errors='ignore')
         #df["Product_ID"] = get_series_ids(df["Product_ID"])
-        df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
+        #df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
+        df['Product_ID'] = df['Product_ID'].astype(int)
+        
+        #df['Product_ID'] = pd.to_numeric(df['Product_ID'])
 
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
