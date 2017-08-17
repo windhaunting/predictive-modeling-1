@@ -28,6 +28,7 @@ Output the results
 from sklearn import linear_model
 import pandas as pd
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 
 class predictLR:
@@ -86,9 +87,13 @@ class predictLR:
         plt.show()
         '''
         
-        df.plot(df['Age'], df['Purchase'])
-        #plt.show()
+        print ("matplotlib.__version__: ", matplotlib.__version__)
+
         
+        #fig = plt.figure()
+        df.plot(x='Age', y='Purchase', style = 'o')
+        plt.show()
+    
     def trainModel(self):
         x = 1
         
