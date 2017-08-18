@@ -92,7 +92,6 @@ class predictLR:
         #drop na
         labelsStYear, levels  = pd.factorize(df['Stay_In_Current_City_Years'])        #can not factorize? affect test accuracy
         df['Stay_In_Current_City_Years'] = labelsProd
-
         
         df = df.dropna()
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
@@ -100,6 +99,8 @@ class predictLR:
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df
+    
+    #analyse and visualize data before training
     def plotExploreData(self, df):
         
         '''
