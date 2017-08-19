@@ -43,10 +43,10 @@ class predictLR:
 
     def readCleanInputData(self, inputFile):
         df = pd.read_csv(inputFile)
-        print ("readCleanInputData df head: ", df.head(), df.dtypes)
+        #print ("readCleanInputData df head: ", df.head(), df.dtypes)
         
-        for col in df.columns:
-            print ("readCleanInputDataunique: ", col, len(df[col].unique()))
+        #for col in df.columns:
+        #    print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
         df.describe()
