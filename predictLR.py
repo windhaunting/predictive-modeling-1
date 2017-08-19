@@ -49,6 +49,7 @@ class predictLR:
             print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
+        df.describe()
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
@@ -60,10 +61,11 @@ class predictLR:
         #show unique 
         #print ('readCleanInputDataunq: ', len(df.Product_Category_3.unique()))
         
+        
         #drop column
         df = df.drop(['Product_Category_3'], axis=1) 
         
-
+      
         #crete dummy variable   #or df factorize();    vs scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
         df = df.drop(['Gender'], axis=1) 
