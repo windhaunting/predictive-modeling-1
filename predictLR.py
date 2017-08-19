@@ -49,7 +49,7 @@ class predictLR:
         #    print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
-        df.describe()
+        print ("describe: ", df.describe())
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
@@ -142,7 +142,10 @@ class predictLR:
 
         plt.show()
         '''
-        
+        plt.figure()
+        df['Purchase'].plot()
+
+        '''
         fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 10))
         fig.subplots_adjust(hspace=1.0) ## Create space between plots
         df.plot(x='Age', y='Purchase', ax = axes[0,0])
@@ -150,7 +153,7 @@ class predictLR:
         # Add titles
         axes[0,0].set_title('Age')
         axes[0,1].set_title('Occupation')
-
+        '''
         
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self,df):
@@ -187,10 +190,10 @@ def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readCleanInputData(inputFile)
-    #preLRObj.plotExploreData(df)
+    preLRObj.plotExploreData(df)
     lm = preLRObj.trainModelData(df)
     
-    testInFile = "../input_data1/test.csv"
-    preLRObj.testOutputModel(testInFile, lm)
+    #testInFile = "../input_data1/test.csv"
+    #preLRObj.testOutputModel(testInFile, lm)
 if __name__== "__main__":
   main()
