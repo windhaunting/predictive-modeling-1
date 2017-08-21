@@ -174,6 +174,7 @@ class predictLR:
     
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
+        #use cross validation; split the data 8:2 ratio?
         x = 1
     
     
