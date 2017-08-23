@@ -28,6 +28,8 @@ Output the results
 
 #http://bigdata-madesimple.com/how-to-run-linear-regression-in-python-scikit-learn/
 
+#https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
+
 from sklearn import linear_model
 import pandas as pd
 import numpy as np
@@ -70,7 +72,7 @@ class predictLR:
         print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
         
         #drop column Product_Category_3 due to too many nan
-        df = df.drop(['Product_ID'], axis=1) 
+        df = df.drop(['User_ID', 'Product_ID'], axis=1) 
         df = df.drop(['Product_Category_3'], axis=1) 
         
         # limit to categorical data using df.select_dtypes()
@@ -78,6 +80,7 @@ class predictLR:
         #df.shape
         print ("X head: ", X.head(3))
         
+        #https://gist.github.com/ramhiser/982ce339d5f8c9a769a0
         #http://www.ritchieng.com/machinelearning-one-hot-encoding/
         # 1. INSTANTIATE
         # encode labels with value between 0 and n_classes-1.
@@ -100,12 +103,14 @@ class predictLR:
         
         # 3. Transform
         onehotlabels = enc.transform(X_2)
+        onehotlabels.columns = onehotlabels.get_feature_names()
+        
         X2 = pd.DataFrame(onehotlabels, index=df.index, columns=df.columns)
         
         df = pd.concat([df, X2], axis=1)
         
-        print ("onehotlabels.shape: ", onehotlabels.shape, df.shape)
-        print ("after preprocessing df head2: ", df.head(), df.dtypes)
+        print ("onehotlabels.shape: ",onehotlabels.columns, onehotlabels.shape, df.shape)
+        #print ("after preprocessing df head2: ", df.describe())
 
         '''
         #drop column Product_Category_3 due to too many nan
