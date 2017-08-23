@@ -41,7 +41,8 @@ class predictLR:
       pass
 
 
-    def readCleanInputData(self, inputFile):
+    #simply clean and dummy coding;   not feature selection
+    def readCleanInputData01(self, inputFile):
         df = pd.read_csv(inputFile)
         #print ("readCleanInputData df head: ", df.head(), df.dtypes)
         
@@ -101,6 +102,12 @@ class predictLR:
         print ("readCleanInputData df head2: ", df.head(), df.dtypes)
 
         return df
+    
+    
+    #use correlation statistics to do feature selection
+    def readCleanInputData02(self, inputFile):
+        x = 1
+        
     
     #analyse and visualize data before training
     def plotExploreData(self, df):
@@ -190,7 +197,7 @@ class predictLR:
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
-    df = preLRObj.readCleanInputData(inputFile)
+    df = preLRObj.readCleanInputData01(inputFile)
     preLRObj.plotExploreData(df)
     lm = preLRObj.trainModelData(df)
     
