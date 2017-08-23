@@ -55,8 +55,8 @@ class predictLR:
         #    print ("readCleanInputDataunique: ", col, len(df[col].unique()))
             #print ("val_count:", df[col].value_counts())
         
-        print ("describe: ", df.describe())
-        
+        #print ("describe: ", df.describe())
+        print (df.head(3))
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
@@ -69,7 +69,14 @@ class predictLR:
         print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
         
         
-        #drop column
+        # limit to categorical data using df.select_dtypes()
+        df = df.select_dtypes(include=[object])
+        #df.shape
+        print (df.head(3))
+        
+        
+        '''
+        #drop column Product_Category_3 due to too many nan
         df = df.drop(['Product_Category_3'], axis=1) 
         
       
@@ -103,6 +110,7 @@ class predictLR:
         df['Stay_In_Current_City_Years'] = labelsProd
         
         df = df.dropna()
+        
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         #print ("readCleanInputData df labels: ", labels, levels)
         
@@ -112,17 +120,16 @@ class predictLR:
         # Standardize features by removing the mean and scaling to unit variance
         #hey might behave badly if the individual feature do not more or less
         #look like standard normally distributed data
-        
         scaled_features = StandardScaler().fit_transform(df)
-        #
+        #print("standard scaler: ", df.mean_)
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
 
-        #print("standard scaler: ", df.mean_)
+        #Transforms features by scaling each feature to a given range.
         scaled_features = MinMaxScaler().fit_transform(df)
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
         #print ("after preprocessing df head2: ", df.head(), df.dtypes)
         
-        
+        '''
         return df
     
     
@@ -235,7 +242,7 @@ def main():
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
-    lm = preLRObj.trainModelData(df)
+    #lm = preLRObj.trainModelData(df)
     
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
