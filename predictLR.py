@@ -69,6 +69,9 @@ class predictLR:
         #show unique 
         print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
         
+        #drop column Product_Category_3 due to too many nan
+        df = df.drop(['Product_ID'], axis=1) 
+        df = df.drop(['Product_Category_3'], axis=1) 
         
         # limit to categorical data using df.select_dtypes()
         X = df.select_dtypes(include=[object])
@@ -84,17 +87,24 @@ class predictLR:
         X_2 = X.apply(le.fit_transform)
         print ("X_2 head: ", X_2.head(3))
 
+        #*** drop previous categorical columns
+        #X.columns
+        df.drop(X.columns, axis=1, inplace=True)
+
         #OneHotEncoder
         #Encode categorical integer features using a one-hot aka one-of-K scheme.
         # 1. INSTANTIATE
         enc = preprocessing.OneHotEncoder()
-        
         # 2. FIT
         enc.fit(X_2)
         
         # 3. Transform
         onehotlabels = enc.transform(X_2)
-        print ("onehotlabels.shape: ", onehotlabels.shape)
+        X2 = pd.DataFrame(onehotlabels, index=X.index, columns=X.columns)
+        
+        df = pd.concat([df, X2], axis=1)
+        
+        print ("onehotlabels.shape: ", onehotlabels.shape, df.shape)
 
         '''
         #drop column Product_Category_3 due to too many nan
