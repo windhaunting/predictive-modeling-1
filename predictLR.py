@@ -103,12 +103,14 @@ class predictLR:
         
         # 3. Transform
         #onehotlabels = enc.transform(X_2)
-        ind = ['Row'+str(i) for i in range(1, len(onehotlabels)+1)]
-        dfX2 = pd.DataFrame(onehotlabels, index=ind, columns = ind)
+        
+        #ind = ['Row'+str(i) for i in range(1, len(onehotlabels)+1)]
+        
+        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]))       #random index here
         
         df2 = pd.concat([df, dfX2], axis=1)
         
-        print ("onehotlabels.shape: ", onehotlabels.shape, df.shape, df2.shape)
+        print ("onehotlabels.shape: ", onehotlabels.shape[1], df.shape, df2.shape)
         #print ("after preprocessing df head2: ", df.describe())
 
         '''
