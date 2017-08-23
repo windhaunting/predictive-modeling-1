@@ -41,7 +41,7 @@ class predictLR:
       pass
 
 
-    #simply clean and dummy coding;   not feature selection
+    #simply clean and dummy coding;    no effective feature selection methods used
     def readCleanInputData01(self, inputFile):
         df = pd.read_csv(inputFile)
         #print ("readCleanInputData df head: ", df.head(), df.dtypes)
@@ -110,7 +110,7 @@ class predictLR:
         
     
     #analyse and visualize data before training
-    def plotExploreData(self, df):
+    def plotExploreDataPreTrain(self, df):
         
         '''
         # specifies the parameters of our graphs
@@ -161,22 +161,25 @@ class predictLR:
         axes[0,0].set_title('Age')
         axes[0,1].set_title('Occupation')
         '''
+    
+    #analyse and visualize data before training
+    def plotExploreDataAfterTrain(self, df):
         
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self,df):
         trainX = df.drop(['Purchase'], axis=1) 
         
         trainY = df.Purchase
-        lm = linear_model.LinearRegression()
+        lm = linear_model.LinearRegression(normalize=True, n_jobs=2)
 
         lm.fit(trainX, trainY)
-        print("Estimated intercept and coeff: ", lm.intercept_, len(lm.coef_))
+        print("Estimated intercept: ", lm.intercept_, "coeff: ", lm.coef_)
         
         #construct a data frame that contains features and estimated coefficients.
         featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
         print ("trainModel r2 score: ", lm.score(trainX, trainY))
-
+        
         return lm
     
     #split original input data to tain and test data to do cross validation etc
@@ -198,7 +201,7 @@ def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readCleanInputData01(inputFile)
-    preLRObj.plotExploreData(df)
+    #preLRObj.plotExploreData(df)
     lm = preLRObj.trainModelData(df)
     
     #testInFile = "../input_data1/test.csv"
