@@ -21,6 +21,8 @@ K-folds cross validation to valuate results locally
 Output the results
 
 '''
+
+
 # pandas usage reference:
 #    http://nbviewer.jupyter.org/urls/bitbucket.org/hrojas/learn-pandas/raw/master/lessons/01%20-%20Lesson.ipynb
 
@@ -31,7 +33,8 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
 from commons import get_series_ids
@@ -44,7 +47,7 @@ class predictLR:
 
 
     #simply clean and dummy coding;    no effective feature selection methods used
-    def readCleanInputData01(self, inputFile):
+    def readPreprocessData(self, inputFile):
         df = pd.read_csv(inputFile)
         #print ("readCleanInputData df head: ", df.head(), df.dtypes)
         
@@ -53,16 +56,17 @@ class predictLR:
             #print ("val_count:", df[col].value_counts())
         
         print ("describe: ", df.describe())
+        
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         
         #show NaN ratio
         #for col in df:
         #    print ('readCleanInputData col: ' , col, ": ", df[col].value_counts(dropna=False))
-        #print ("readCleanInputDatanan: ", len(df), (len(df)-df.count())/len(df))
+        print (" NaN ratio: ", len(df), (len(df)-df.count())/len(df))
         
         #show unique 
-        #print ('readCleanInputDataunq: ', len(df.Product_Category_3.unique()))
+        print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
         
         
         #drop column
@@ -101,13 +105,29 @@ class predictLR:
         df = df.dropna()
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         #print ("readCleanInputData df labels: ", labels, levels)
-        print ("readCleanInputData df head2: ", df.head(), df.dtypes)
+        
+        #Transforms features by scaling each feature to a given range.
 
+
+        # Standardize features by removing the mean and scaling to unit variance
+        #hey might behave badly if the individual feature do not more or less
+        #look like standard normally distributed data
+        
+        scaled_features = StandardScaler().fit_transform(df)
+        #
+        df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+
+        #print("standard scaler: ", df.mean_)
+        scaled_features = MinMaxScaler().fit_transform(df)
+        df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+        #print ("after preprocessing df head2: ", df.head(), df.dtypes)
+        
+        
         return df
     
     
     #use correlation statistics to do feature selection
-    def readCleanInputData02(self, inputFile):
+    def featureSelection01(self, inputFile):
         x = 1
         
     
@@ -213,7 +233,7 @@ class predictLR:
 def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
-    df = preLRObj.readCleanInputData01(inputFile)
+    df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
     lm = preLRObj.trainModelData(df)
     
