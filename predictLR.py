@@ -32,6 +32,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
+
 from commons import get_series_ids
 
 class predictLR:
@@ -162,8 +163,9 @@ class predictLR:
         axes[0,1].set_title('Occupation')
         '''
     
-    #analyse and visualize data before training
+    #analyse and visualize data after training
     def plotExploreDataAfterTrain(self, df):
+        #plot residual plot
         
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self,df):
