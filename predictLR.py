@@ -31,7 +31,8 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import mean_squared_error
 
 from commons import get_series_ids
 
@@ -164,11 +165,12 @@ class predictLR:
         '''
     
     #analyse and visualize data after training
-    def plotExploreDataAfterTrain(self, yPredicted, yObserved):
+    def plotExploreDataAfterTrain(self, y_pred, y_true):
         #plot residual plot
-        print ("len yPredicted, yObserved: ", len(yPredicted), len(yObserved))
+        plt.rcParams['agg.path.chunksize'] = 10000
+        print ("len y_pred, y_true: ", len(y_pred), len(y_true))
         #plt.scatter(x_test, y_test,  color='black')
-        plt.plot(yPredicted, yObserved-yPredicted, color='blue', linewidth=3)
+        plt.plot(y_pred, y_true-y_pred, color='blue', linewidth=3)
         plt.show()
         
     #use data df to train model;  data[-1] is the train ground truth y values
@@ -179,16 +181,18 @@ class predictLR:
         lm = linear_model.LinearRegression(normalize=True, n_jobs=2)
 
         lm.fit(trainX, trainY)
-        print("Estimated intercept: ", lm.intercept_, "coeff: ", lm.coef_)
+        print("Estimated intercept: ", lm.intercept_, "coeff len: ", len(lm.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
         featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
         print ("trainModel r2 score: ", lm.score(trainX, trainY))
         
-        yPredicted = lm.predict(trainX)
+        y_pred = lm.predict(trainX)
+        #get mean squared error
+        print (" means squared error: ", mean_squared_error(trainY, y_pred))          
         #plot residual
-        self.plotExploreDataAfterTrain(yPredicted, trainY)
+        #self.plotExploreDataAfterTrain(y_pred, trainY)
         return lm
     
     #split original input data to tain and test data to do cross validation etc
