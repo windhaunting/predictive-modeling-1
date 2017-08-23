@@ -164,9 +164,11 @@ class predictLR:
         '''
     
     #analyse and visualize data after training
-    def plotExploreDataAfterTrain(self, df):
+    def plotExploreDataAfterTrain(self, yPredicted, yObserved):
         #plot residual plot
-        
+        #plt.scatter(x_test, y_test,  color='black')
+        plt.plot(yPredicted, yObserved-yPredicted, color='blue', linewidth=3)
+
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self,df):
         trainX = df.drop(['Purchase'], axis=1) 
@@ -182,6 +184,9 @@ class predictLR:
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
         print ("trainModel r2 score: ", lm.score(trainX, trainY))
         
+        yPredicted = lm.predict(trainX)
+        #plot residual
+        self.plotExploreDataAfterTrain(yPredicted, trainY)
         return lm
     
     #split original input data to tain and test data to do cross validation etc
@@ -191,13 +196,13 @@ class predictLR:
     
     
     #final test output for the previous trained model
-    def testOutputModel(self, testInFile, lm):
+    def testOutputModelFinal(self, testInFile, lm):
         df = self.readCleanInputData(testInFile)
         testX = df                               #.drop(['Purchase'], axis=1) 
         #testYReal = df['Purchase']
         testYEstimate = lm.predict(testX)
         print ("testOutputModel testYEstimate : ", testYEstimate)
-
+        
         
 def main():
     preLRObj = predictLR()
