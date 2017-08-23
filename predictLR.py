@@ -166,9 +166,11 @@ class predictLR:
     #analyse and visualize data after training
     def plotExploreDataAfterTrain(self, yPredicted, yObserved):
         #plot residual plot
+        print ("len yPredicted, yObserved: ", len(yPredicted), len(yObserved))
         #plt.scatter(x_test, y_test,  color='black')
         plt.plot(yPredicted, yObserved-yPredicted, color='blue', linewidth=3)
-
+        plt.show()
+        
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self,df):
         trainX = df.drop(['Purchase'], axis=1) 
