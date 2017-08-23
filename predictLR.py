@@ -99,17 +99,16 @@ class predictLR:
         # 1. INSTANTIATE
         enc = preprocessing.OneHotEncoder()
         # 2. FIT
-        enc.fit(X_2)
+        onehotlabels = enc.fit_transform(X_2)
         
         # 3. Transform
-        onehotlabels = enc.transform(X_2)
-        onehotlabels.columns = onehotlabels.get_feature_names()
+        #onehotlabels = enc.transform(X_2)
         
-        X2 = pd.DataFrame(onehotlabels, index=df.index, columns=df.columns)
+        #X2 = pd.DataFrame(onehotlabels, index=df.index, columns=df.columns)
         
-        df = pd.concat([df, X2], axis=1)
+        df2 = pd.concat([df, onehotlabels], axis=1)
         
-        print ("onehotlabels.shape: ",onehotlabels.columns, onehotlabels.shape, df.shape)
+        print ("onehotlabels.shape: ", onehotlabels.shape, df.shape, df2.shape)
         #print ("after preprocessing df head2: ", df.describe())
 
         '''
@@ -170,6 +169,8 @@ class predictLR:
         return df
     
     
+    def dummyEncodeMethod1():
+        x = 1
     #use correlation statistics to do feature selection
     def featureSelection01(self, inputFile):
         x = 1
