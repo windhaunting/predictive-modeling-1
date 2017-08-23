@@ -36,6 +36,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
+from sklearn import preprocessing
 
 from commons import get_series_ids
 
@@ -70,11 +71,31 @@ class predictLR:
         
         
         # limit to categorical data using df.select_dtypes()
-        df = df.select_dtypes(include=[object])
+        X = df.select_dtypes(include=[object])
         #df.shape
-        print (df.head(3))
+        print ("X head: ", X.head(3))
         
+        #http://www.ritchieng.com/machinelearning-one-hot-encoding/
+        # 1. INSTANTIATE
+        # encode labels with value between 0 and n_classes-1.
+        le = preprocessing.LabelEncoder()
+        # 2/3. FIT AND TRANSFORM
+        # use df.apply() to apply le.fit_transform to all columns
+        X_2 = X.apply(le.fit_transform)
+        print ("X_2 head: ", X_2.head(3))
+
+        #OneHotEncoder
+        #Encode categorical integer features using a one-hot aka one-of-K scheme.
+        # 1. INSTANTIATE
+        enc = preprocessing.OneHotEncoder()
         
+        # 2. FIT
+        enc.fit(X_2)
+        
+        # 3. Transform
+        onehotlabels = enc.transform(X_2)
+        print ("onehotlabels.shape: ", onehotlabels.shape)
+
         '''
         #drop column Product_Category_3 due to too many nan
         df = df.drop(['Product_Category_3'], axis=1) 
