@@ -100,11 +100,12 @@ class predictLR:
         
         # 3. Transform
         onehotlabels = enc.transform(X_2)
-        X2 = pd.DataFrame(onehotlabels, index=X.index, columns=X.columns)
+        X2 = pd.DataFrame(onehotlabels)                #, index=X.index, columns=X.columns)
         
         df = pd.concat([df, X2], axis=1)
         
         print ("onehotlabels.shape: ", onehotlabels.shape, df.shape)
+
 
         '''
         #drop column Product_Category_3 due to too many nan
