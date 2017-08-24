@@ -94,8 +94,12 @@ class predictLR:
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
         
         df = pd.DataFrame(array, index=df.index, columns=df.columns)
-        print ("after preprocessing df head2: ", df.head(), df.dtypes)
+        print ("after preprocessing df head2: ", df.head())          #df.dtypes
         
+        
+        print ("after feature selection df head3: ", df.head())
+
+
         return df
     
     
@@ -180,7 +184,7 @@ class predictLR:
         #filter method
         #use variance:
         varArray = VarianceThreshold(threshold=3).fit_transform(df)
-        
+        selector.fit_transform(X)
         
     
     #analyse and visualize data before training
