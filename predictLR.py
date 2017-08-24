@@ -32,6 +32,8 @@ from sklearn import linear_model
 import pandas as pd
 import numpy as np
 import matplotlib
+from numpy import log1p
+
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
@@ -83,17 +85,18 @@ class predictLR:
         df = self.dummyEncodeMethod2(df)
         #print ("after preprocessing df head2: ", df.describe())      
            
-        df = self.preprocessNANMethod(df)
+        imputedArray = self.preprocessNANMethod(df)
         print ("dropna df shape ", df.shape)
         
+        transArray = self.preprocessTransform(imputedArray) 
         #Transforms features by scaling each feature to a given range.
         # Standardize features by removing the mean and scaling to unit variance
-        scaled_features = StandardScaler().fit_transform(df)
+        scaled_features = StandardScaler().fit_transform(transArray)
         #print("standard scaler: ", df.mean_)
-        df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+        #df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
 
         #Transforms features by scaling each feature to a given range.
-        scaled_features = MinMaxScaler().fit_transform(df)
+        scaled_features = MinMaxScaler().fit_transform(scaled_features)
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
         print ("after preprocessing df head2: ", df.head(), df.dtypes)
         
@@ -140,7 +143,6 @@ class predictLR:
         print ("categoDf head: ", categoDf.head(3))
         dfDummy = pd.get_dummies(categoDf)      #crete dummy variable or df factorize();    vs scikit-learn preprocessing Encoder
 
-        
         #drop previous categorical columns
         df1 = df.drop(categoDf, axis=1) 
 
@@ -153,16 +155,17 @@ class predictLR:
         #drop rows with all NaN
         df = df.dropna(axis=0, how='all', thresh=2)       #Keep only the rows with at least 2 non-na values:
         imputedArray = Imputer(missing_values="NaN", strategy='mean').fit_transform(df)
-        df = pd.DataFrame(imputedArray, index=df.index, columns=df.columns)
+        #df = pd.DataFrame(imputedArray, index=df.index, columns=df.columns)
         #fill na
         
-        return df
+        return imputedArray
     
     #data transform, polynomial, log or exponential. etc.
-    def dataTransform(self, df):
+    def preprocessTransform(self, df):
         
-        FunctionTransformer(log1p).fit_transform(iris.data)
+        transArray = FunctionTransformer(log1p).fit_transform(df)
 
+        return transArray
         
     #use correlation statistics to do feature selection
     def featureSelection01(self, df):
