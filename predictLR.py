@@ -74,8 +74,9 @@ class predictLR:
         df = df.drop(['Product_Category_3'], axis=1) 
         
        
-        df = self.dummyEncodeMethod1(df)
-        print ("after preprocessing df head2: ", df.describe())
+        #df = self.dummyEncodeMethod1(df)
+        df = self.dummyEncodeMethod2(df)
+        #print ("after preprocessing df head2: ", df.describe())
 
         '''        
       
@@ -132,7 +133,9 @@ class predictLR:
         return df
     
     
-    #use scikit-learn label and oneHotEncoder  -- method 1
+    #use scikit-learn label and oneHotEncoder  -- method 1 
+    # --has bug  ValueError: setting an array element with a sequence when call this function
+
     def dummyEncodeMethod1(self, df):
        # limit to categorical data using df.select_dtypes()
         X = df.select_dtypes(include=[object])
@@ -154,7 +157,7 @@ class predictLR:
         enc = preprocessing.OneHotEncoder()
         onehotlabels = enc.fit_transform(X_2)
         
-        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]))       #random index here
+        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]), dtype=object)       #random index here
         
         df2 = pd.concat([df, dfX2], axis=1)        
         print ("onehotlabels.shape: ", onehotlabels.shape[1], df.shape, df2.shape, type(df2))
@@ -163,8 +166,19 @@ class predictLR:
     
     #use pands get_dummies  -- method 2
     def dummyEncodeMethod2(self, df):
-        x = 2
+       # limit to categorical data using df.select_dtypes()
+        categoDf = df.select_dtypes(include=[object])
+        #df.shape
+        print ("categoDf head: ", categoDf.head(3))
+        dfDummy = pd.get_dummies(categoDf)
+        
+        #drop previous categorical columns
+        df1 = df.drop(categoDf, axis=1) 
 
+        df = df.concat([df1, dfDummy], axis=1)
+
+        return df
+        
     #use correlation statistics to do feature selection
     def featureSelection01(self, inputFile):
         x = 1
@@ -233,7 +247,7 @@ class predictLR:
         plt.show()
         
     #use data df to train model;  data[-1] is the train ground truth y values
-    def trainModelData(self,df):
+    def trainModelData(self, df):
         trainX = df.drop(['Purchase'], axis=1) 
         
         trainY = df.Purchase
@@ -274,7 +288,7 @@ def main():
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
-    #lm = preLRObj.trainModelData(df)
+    lm = preLRObj.trainModelData(df)
     
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
