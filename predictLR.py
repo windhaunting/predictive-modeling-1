@@ -36,7 +36,11 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
-from sklearn import preprocessing
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+
+from sklearn.preprocessing import Imputer
 
 from commons import get_series_ids
 
@@ -147,7 +151,7 @@ class predictLR:
         print ("X head: ", X.head(3))
         
         # encode labels with value between 0 and n_classes-1.
-        le = preprocessing.LabelEncoder()
+        le = LabelEncoder()
         # use df.apply() to apply le.fit_transform to all columns
         X_2 = X.apply(le.fit_transform)
         print ("X_2 head: ", X_2.head(3))
@@ -158,7 +162,7 @@ class predictLR:
 
         #OneHotEncoder
         #Encode categorical integer features using a one-hot aka one-of-K scheme.
-        enc = preprocessing.OneHotEncoder()
+        enc = OneHotEncoder()
         onehotlabels = enc.fit_transform(X_2)
         
         dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]), dtype=object)       #random index here
@@ -281,7 +285,7 @@ class predictLR:
     def validationModel(self, df):
         #use cross validation; split the data 8:2 ratio?
         x = 1
-    
+        
     
     #final test output for the previous trained model
     def testOutputModelFinal(self, testInFile, lm):
