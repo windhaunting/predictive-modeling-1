@@ -116,8 +116,12 @@ class predictLR:
         '''
         
         
-        #Transforms features by scaling each feature to a given range.
+        #fill na or drop na
+        df = self.preprocessNANMethod(df)
+        print ("dropna df shape ", df.shape)
 
+        
+        #Transforms features by scaling each feature to a given range.
         # Standardize features by removing the mean and scaling to unit variance
         #hey might behave badly if the individual feature do not more or less
         #look like standard normally distributed data
@@ -175,10 +179,15 @@ class predictLR:
         #drop previous categorical columns
         df1 = df.drop(categoDf, axis=1) 
 
-        df = df.concat([df1, dfDummy], axis=1)
+        df = pd.concat([df1, dfDummy], axis=1)
 
         return df
         
+    def preprocessNANMethod(self, df):
+        #drop all nan rows or fill
+        df = df.dropna(axis=0, how='all', thresh=2)               #Keep only the rows with at least 2 non-na values:
+  
+        return df
     #use correlation statistics to do feature selection
     def featureSelection01(self, inputFile):
         x = 1
