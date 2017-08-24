@@ -39,8 +39,8 @@ from sklearn.metrics import mean_squared_error
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-
 from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import FunctionTransformer
 
 from commons import get_series_ids
 
@@ -77,58 +77,17 @@ class predictLR:
         df = df.drop(['User_ID', 'Product_ID'], axis=1) 
         df = df.drop(['Product_Category_3'], axis=1) 
         
-       
+        #fill na or drop na
+
         #df = self.dummyEncodeMethod1(df)
         df = self.dummyEncodeMethod2(df)
-        #print ("after preprocessing df head2: ", df.describe())
-
-        '''        
-      
-        #crete dummy variable   #or df factorize();    vs scikit-learn preprocessing.LabelEncoder
-        dfGender = pd.get_dummies(df['Gender'])
-        df = df.drop(['Gender'], axis=1) 
-        
-        dfMarital = pd.get_dummies(df['Marital_Status'])
-        df = df.drop(['Marital_Status'], axis = 1)
-        
-        dfAge = pd.get_dummies(df['Age'])
-        df = df.drop(['Age'], axis=1) 
-        
-        dfCity = pd.get_dummies(df['City_Category'])
-        df = df.drop(['City_Category'], axis=1) 
-        #dfProd1 = pd.get_dummies(df['Product_Category_1'])
-        #dfProd2 = pd.get_dummies(df['Product_Category_2'])
-
-        df = df.join([dfGender, dfCity, dfMarital, dfAge])
-        
-        #tranfer to float for object type
-        #df = df.apply(pd.to_numeric, errors='ignore')
-        #df["Product_ID"] = get_series_ids(df["Product_ID"])
-        #df['Product_ID'] = df['Product_ID'].str.replace(',','').astype(np.int64)
-        #df['Product_ID'] = df['Product_ID'].astype('str').apply(lambda x: x[1:]).astype(int)         # it works
-        labelsProd, levels  = pd.factorize(df['Product_ID'])         #not correct here?  remove this feature or use dummy 
-        #df['Product_ID'] = pd.to_numeric(df['Product_ID'])
-        df['Product_ID'] = labelsProd
-        #drop na
-        labelsStYear, levels  = pd.factorize(df['Stay_In_Current_City_Years'])        #can not factorize? affect test accuracy
-        df['Stay_In_Current_City_Years'] = labelsProd
-        
-        df = df.dropna()
-        
-        #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
-        #print ("readCleanInputData df labels: ", labels, levels)
-        '''
-        
-        
-        #fill na or drop na
+        #print ("after preprocessing df head2: ", df.describe())      
+           
         df = self.preprocessNANMethod(df)
         print ("dropna df shape ", df.shape)
-
         
         #Transforms features by scaling each feature to a given range.
         # Standardize features by removing the mean and scaling to unit variance
-        #hey might behave badly if the individual feature do not more or less
-        #look like standard normally distributed data
         scaled_features = StandardScaler().fit_transform(df)
         #print("standard scaler: ", df.mean_)
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
@@ -136,7 +95,7 @@ class predictLR:
         #Transforms features by scaling each feature to a given range.
         scaled_features = MinMaxScaler().fit_transform(df)
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
-        #print ("after preprocessing df head2: ", df.head(), df.dtypes)
+        print ("after preprocessing df head2: ", df.head(), df.dtypes)
         
         return df
     
@@ -174,11 +133,13 @@ class predictLR:
     
     #use pands get_dummies  -- method 2
     def dummyEncodeMethod2(self, df):
+        
        # limit to categorical data using df.select_dtypes()
         categoDf = df.select_dtypes(include=[object])
         #df.shape
         print ("categoDf head: ", categoDf.head(3))
-        dfDummy = pd.get_dummies(categoDf)
+        dfDummy = pd.get_dummies(categoDf)      #crete dummy variable or df factorize();    vs scikit-learn preprocessing Encoder
+
         
         #drop previous categorical columns
         df1 = df.drop(categoDf, axis=1) 
@@ -187,16 +148,26 @@ class predictLR:
 
         return df
         
+    #process missing value here
     def preprocessNANMethod(self, df):
         #drop rows with all NaN
-        df = df.dropna(axis=0, how='all', thresh=2)               #Keep only the rows with at least 2 non-na values:
-  
+        df = df.dropna(axis=0, how='all', thresh=2)       #Keep only the rows with at least 2 non-na values:
+        imputedArray = Imputer(missing_values="NaN", strategy='mean').fit_transform(df)
+        df = pd.DataFrame(imputedArray, index=df.index, columns=df.columns)
         #fill na
         
         return df
+    
+    #data transform, polynomial, log or exponential. etc.
+    def dataTransform(self, df):
+        
+        FunctionTransformer(log1p).fit_transform(iris.data)
+
+        
     #use correlation statistics to do feature selection
-    def featureSelection01(self, inputFile):
+    def featureSelection01(self, df):
         x = 1
+        
         
     
     #analyse and visualize data before training
