@@ -43,6 +43,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.feature_selection import VarianceThreshold
 
 from commons import get_series_ids
 
@@ -85,19 +86,14 @@ class predictLR:
         df = self.dummyEncodeMethod2(df)
         #print ("after preprocessing df head2: ", df.describe())      
            
-        imputedArray = self.preprocessNANMethod(df)
+        array = self.preprocessNANMethod(df)
         print ("dropna df shape ", df.shape)
         
-        transArray = self.preprocessTransform(imputedArray) 
-        #Transforms features by scaling each feature to a given range.
-        # Standardize features by removing the mean and scaling to unit variance
-        scaled_features = StandardScaler().fit_transform(transArray)
-        #print("standard scaler: ", df.mean_)
-        #df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+        array = self.preprocessTransform(array) 
 
-        #Transforms features by scaling each feature to a given range.
-        scaled_features = MinMaxScaler().fit_transform(scaled_features)
-        df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+        #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
+        
+        df = pd.DataFrame(array, index=df.index, columns=df.columns)
         print ("after preprocessing df head2: ", df.head(), df.dtypes)
         
         return df
@@ -161,15 +157,29 @@ class predictLR:
         return imputedArray
     
     #data transform, polynomial, log or exponential. etc.
-    def preprocessTransform(self, df):
+    def preprocessTransform(self, array):
         
-        transArray = FunctionTransformer(log1p).fit_transform(df)
+        transArray = FunctionTransformer(log1p).fit_transform(array)
 
         return transArray
         
+    def preprocessScaler(self, array):
+        #Transforms features by scaling each feature to a given range.
+        # Standardize features by removing the mean and scaling to unit variance
+        stanScalerArray = StandardScaler().fit_transform(array)
+        #print("standard scaler: ", df.mean_)
+        #df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
+
+        #Transforms features by scaling each feature to a given range.
+        rangeScalerArray = MinMaxScaler().fit_transform(stanScalerArray)
+        
+        return rangeScalerArray
+        
     #use correlation statistics to do feature selection
     def featureSelection01(self, df):
-        x = 1
+        #filter method
+        #use variance:
+        varArray = VarianceThreshold(threshold=3).fit_transform(df)
         
         
     
