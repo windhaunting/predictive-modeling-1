@@ -188,9 +188,11 @@ class predictLR:
         return df
         
     def preprocessNANMethod(self, df):
-        #drop all nan rows or fill
+        #drop rows with all NaN
         df = df.dropna(axis=0, how='all', thresh=2)               #Keep only the rows with at least 2 non-na values:
   
+        #fill na
+        
         return df
     #use correlation statistics to do feature selection
     def featureSelection01(self, inputFile):
