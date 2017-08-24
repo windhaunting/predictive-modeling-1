@@ -7,7 +7,7 @@ Created on Wed Aug 16 20:03:30 2017
 """
 
 #black friday purchase amount prediction
-#using linear regression
+#use linear regression here to look at the performance
 '''
 --Data Handling
 Importing Data with Pandas
@@ -19,15 +19,13 @@ Plotting results
 --Valuation of the Analysis
 K-folds cross validation to valuate results locally
 Output the results
-
 '''
 
-
 # pandas usage reference:
-#    http://nbviewer.jupyter.org/urls/bitbucket.org/hrojas/learn-pandas/raw/master/lessons/01%20-%20Lesson.ipynb
-
+# http://nbviewer.jupyter.org/urls/bitbucket.org/hrojas/learn-pandas/raw/master/lessons/01%20-%20Lesson.ipynb
 #http://bigdata-madesimple.com/how-to-run-linear-regression-in-python-scikit-learn/
-
+#https://gist.github.com/ramhiser/982ce339d5f8c9a769a0
+#http://www.ritchieng.com/machinelearning-one-hot-encoding/
 #https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
 
 from sklearn import linear_model
@@ -75,48 +73,11 @@ class predictLR:
         df = df.drop(['User_ID', 'Product_ID'], axis=1) 
         df = df.drop(['Product_Category_3'], axis=1) 
         
-        # limit to categorical data using df.select_dtypes()
-        X = df.select_dtypes(include=[object])
-        #df.shape
-        print ("X head: ", X.head(3))
-        
-        #https://gist.github.com/ramhiser/982ce339d5f8c9a769a0
-        #http://www.ritchieng.com/machinelearning-one-hot-encoding/
-        # 1. INSTANTIATE
-        # encode labels with value between 0 and n_classes-1.
-        le = preprocessing.LabelEncoder()
-        # 2/3. FIT AND TRANSFORM
-        # use df.apply() to apply le.fit_transform to all columns
-        X_2 = X.apply(le.fit_transform)
-        print ("X_2 head: ", X_2.head(3))
+       
+        df = self.dummyEncodeMethod1(df)
+        print ("after preprocessing df head2: ", df.describe())
 
-        #*** drop previous categorical columns
-        #X.columns
-        df.drop(X.columns, axis=1, inplace=True)
-
-        #OneHotEncoder
-        #Encode categorical integer features using a one-hot aka one-of-K scheme.
-        # 1. INSTANTIATE
-        enc = preprocessing.OneHotEncoder()
-        # 2. FIT
-        onehotlabels = enc.fit_transform(X_2)
-        
-        # 3. Transform
-        #onehotlabels = enc.transform(X_2)
-        
-        #ind = ['Row'+str(i) for i in range(1, len(onehotlabels)+1)]
-        
-        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]))       #random index here
-        
-        df2 = pd.concat([df, dfX2], axis=1)
-        
-        print ("onehotlabels.shape: ", onehotlabels.shape[1], df.shape, df2.shape)
-        #print ("after preprocessing df head2: ", df.describe())
-
-        '''
-        #drop column Product_Category_3 due to too many nan
-        df = df.drop(['Product_Category_3'], axis=1) 
-        
+        '''        
       
         #crete dummy variable   #or df factorize();    vs scikit-learn preprocessing.LabelEncoder
         dfGender = pd.get_dummies(df['Gender'])
@@ -151,9 +112,10 @@ class predictLR:
         
         #print ("readCleanInputData nan2: ", len(df), (len(df)-df.count())/len(df))
         #print ("readCleanInputData df labels: ", labels, levels)
+        '''
+        
         
         #Transforms features by scaling each feature to a given range.
-
 
         # Standardize features by removing the mean and scaling to unit variance
         #hey might behave badly if the individual feature do not more or less
@@ -167,12 +129,42 @@ class predictLR:
         df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
         #print ("after preprocessing df head2: ", df.head(), df.dtypes)
         
-        '''
         return df
     
     
-    def dummyEncodeMethod1():
-        x = 1
+    #use scikit-learn label and oneHotEncoder  -- method 1
+    def dummyEncodeMethod1(self, df):
+       # limit to categorical data using df.select_dtypes()
+        X = df.select_dtypes(include=[object])
+        #df.shape
+        print ("X head: ", X.head(3))
+        
+        # encode labels with value between 0 and n_classes-1.
+        le = preprocessing.LabelEncoder()
+        # use df.apply() to apply le.fit_transform to all columns
+        X_2 = X.apply(le.fit_transform)
+        print ("X_2 head: ", X_2.head(3))
+
+        #*** drop previous categorical columns
+        #X.columns
+        df.drop(X.columns, axis=1, inplace=True)
+
+        #OneHotEncoder
+        #Encode categorical integer features using a one-hot aka one-of-K scheme.
+        enc = preprocessing.OneHotEncoder()
+        onehotlabels = enc.fit_transform(X_2)
+        
+        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]))       #random index here
+        
+        df2 = pd.concat([df, dfX2], axis=1)        
+        print ("onehotlabels.shape: ", onehotlabels.shape[1], df.shape, df2.shape, type(df2))
+        return df2
+        
+    
+    #use pands get_dummies  -- method 2
+    def dummyEncodeMethod2(self, df):
+        x = 2
+
     #use correlation statistics to do feature selection
     def featureSelection01(self, inputFile):
         x = 1
