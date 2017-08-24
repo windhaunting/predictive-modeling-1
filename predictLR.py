@@ -94,10 +94,12 @@ class predictLR:
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
         
         df = pd.DataFrame(array, index=df.index, columns=df.columns)
-        print ("after preprocessing df head2: ", df.head())          #df.dtypes
+        print ("after preprocessing df head2: ", df.shape, df.head())          #df.dtypes
         
+        #begin feature slection 
+        df = self.featureSelection01(df)
         
-        print ("after feature selection df head3: ", df.head())
+        print ("after feature selection df head3: ", df.shape, df.head())
 
 
         return df
@@ -179,12 +181,23 @@ class predictLR:
         
         return rangeScalerArray
         
-    #use correlation statistics to do feature selection
-    def featureSelection01(self, df):
+    #use variance statistics to do feature selection
+    def featureSelectionVariance01(self, df):
         #filter method
         #use variance:
-        varArray = VarianceThreshold(threshold=3).fit_transform(df)
-        selector.fit_transform(X)
+        varSelector = VarianceThreshold()                #threshold=0.1)
+        
+        varSelector.fit_transform(df)
+        #idxs = varSelector.get_support(indices=True)
+        #print("featureSelection01 varArray: ", idxs)
+        
+        df = df.iloc[:, varSelector.get_support(indices=False)]
+        #return varArray, idxs
+        return df
+    
+    #use correlation statistics to do feature selection
+    def featureSelectionCorrelation02(self, df):
+        x = 2
         
     
     #analyse and visualize data before training
