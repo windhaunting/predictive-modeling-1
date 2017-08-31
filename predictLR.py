@@ -45,6 +45,9 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.feature_selection import VarianceThreshold
 
+from sklearn.model_selection import KFold
+
+
 from commons import get_series_ids
 
 class predictLR:
@@ -284,6 +287,15 @@ class predictLR:
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         return lm
     
+    #genearl cross validation
+    def crossValidation(self):
+        kf = KFold(n_splits=2, random_state=None, shuffle=False)
+
+        for train_index, test_index in kf.split(X):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
         #use cross validation; split the data 8:2 ratio?
@@ -304,7 +316,7 @@ def main():
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
-    lm = preLRObj.trainModelData(df)
+    #lm = preLRObj.trainModelData(df)
     
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
