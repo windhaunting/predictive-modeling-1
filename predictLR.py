@@ -331,12 +331,17 @@ class predictLR:
     def crossValidationGridLasso(self, x, y):
         lasso = Lasso(random_state=0)
         alphas = np.logspace(-4, 0, 30)
-        tuned_parameters = [{'alpha': alphas}]
+        tuned_parameters = [{'alpha': alphas}]              #here alphas 
         n_folds = 5
-        clf = GridSearchCV(lasso, tuned_parameters, cv=n_folds, refit=False)
+        clf = GridSearchCV(lasso, tuned_parameters, n_jobs=4, cv=n_folds, refit=False)   #4 core
         clf.fit(x, y)
         scores = clf.cv_results_['mean_test_score']
         scores_std = clf.cv_results_['std_test_score']
+        
+        print('crossValidationGridLasso score', clf.best_params_, clf.best_score_)
+
+               
+ 
         plt.figure().set_size_inches(8, 6)
         plt.semilogx(alphas, scores)
 
