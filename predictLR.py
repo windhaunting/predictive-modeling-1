@@ -300,9 +300,15 @@ class predictLR:
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         
         #cross validation
-        #self.crossValidation(trainX, trainY, lm)
-        #self.crossValidation(trainX, trainY, lm)
+        self.crossValidation(trainX, trainY, lm)
         self.crossValidationGridLasso(trainX, trainY)
+        
+        #after lasso feature selection
+
+        #get mean squared error
+       # print (" after lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
+       # print (" after lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
+
         return lm
     
     #genearl cross validation 
@@ -325,7 +331,7 @@ class predictLR:
         rmse_cv = np.sqrt(mean_squared_error(p, y))   #root mean square error
         print('RMSE on 5-fold CV: {:.2}'.format(rmse_cv))
         #self.plotCommonAfterTrain(p, y)
-        self.plotResidualAfterTrain(p, y)
+        #self.plotResidualAfterTrain(p, y)
         
     #lasso exhaustive grid cross validation ;  ElasticNet;  lasso could also help feature selection
     def crossValidationGridLasso(self, x, y):
@@ -333,7 +339,7 @@ class predictLR:
         alphas = np.logspace(-4, 0, 30)
         tuned_parameters = [{'alpha': alphas}]              #here alphas 
         n_folds = 5
-        clf = GridSearchCV(lasso, tuned_parameters, n_jobs=4, cv=n_folds, refit=False)   #4 core
+        clf = GridSearchCV(lasso, tuned_parameters, n_jobs=4, cv=n_folds, refit=True)   #4 core
         clf.fit(x, y)
         scores = clf.cv_results_['mean_test_score']
         scores_std = clf.cv_results_['std_test_score']
@@ -341,7 +347,7 @@ class predictLR:
         print('crossValidationGridLasso score', clf.best_params_, clf.best_score_)
 
                
- 
+        '''
         plt.figure().set_size_inches(8, 6)
         plt.semilogx(alphas, scores)
 
@@ -358,6 +364,9 @@ class predictLR:
         plt.xlabel('alpha')
         plt.axhline(np.max(scores), linestyle='--', color='.5')
         plt.xlim([alphas[0], alphas[-1]])
+        '''
+        
+        return clf
     
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
