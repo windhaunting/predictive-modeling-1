@@ -291,25 +291,26 @@ class predictLR:
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         
         #cross validation
-        self.crossValidation(trainX, trainY)
+        self.crossValidation(trainX, trainY, lm)
     
         return lm
     
     #genearl cross validation 
-    def crossValidation(self, x, y):
+    def crossValidation(self, x, y, lm):
         #X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2)
         
-        #print ("crossValidation train: ", X_train.shape, y_train.shape)
-        #print ("crossValidation test: ", X_test.shape, y_test.shape)
+ 
 
-        kf = KFold(n_splits=2, random_state=None, shuffle=False)
+        kf = KFold(n_splits=5, random_state=None, shuffle=False)
 
         for train_index, test_index in kf.split(x):
             print("TRAIN:", train_index, "TEST:", test_index)
-            x_train, x_test = x[train_index], x[test_index]
-            y_train, y_test = y[train_index], y[test_index]
-
-   
+            x_train, x_test = x.loc[train_index], x.loc[test_index]
+            y_train, y_test = y.loc[train_index], y.loc[test_index]
+            
+            print ("crossValidation train shape: ", trainX.shape, testX.shape)
+            print ("crossValidation test shape: ", trainY.shape, testY.shape)
+            lm.fit(x_train, y_train)
     #lasso cross validation ;  ElasticNet
     
     
