@@ -49,6 +49,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
 from sklearn.linear_model import LassoCV
+from sklearn.linear_model import Lasso
+from sklearn.model_selection import GridSearchCV
 
 from commons import get_series_ids
 
@@ -263,7 +265,7 @@ class predictLR:
     def plotResidualAfterTrain(self, y_pred, y_true):
         #plot residual plot
         plt.rcParams['agg.path.chunksize'] = 10000
-        print ("len y_pred, y_true: ", len(y_pred), len(y_true))
+        #print ("len y_pred, y_true: ", len(y_pred), len(y_true))
         #plt.scatter(x_test, y_test,  color='black')
         plt.plot(y_pred, y_true-y_pred, color='blue', linewidth=3)  #
         plt.show()
@@ -298,16 +300,17 @@ class predictLR:
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         
         #cross validation
-        self.crossValidation(trainX, trainY, lm)
-    
+        #self.crossValidation(trainX, trainY, lm)
+        #self.crossValidation(trainX, trainY, lm)
+        self.crossValidationGridLasso(trainX, trainY)
         return lm
     
     #genearl cross validation 
     def crossValidation(self, x, y, lm):
         #X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2)
         
-        n_fold = 5
-        kf = KFold(n_splits=n_fold, random_state=None, shuffle=False)
+        n_folds = 5
+        kf = KFold(n_splits=n_folds, random_state=None, shuffle=False)
         p = np.zeros_like(y)
         for train_index, test_index in kf.split(x):
             print("TRAIN:", train_index, "TEST:", test_index)
@@ -324,9 +327,32 @@ class predictLR:
         #self.plotCommonAfterTrain(p, y)
         self.plotResidualAfterTrain(p, y)
         
-    #lasso cross validation ;  ElasticNet
-    def crossValidationLasso(self, x, y):
-        x = 1
+    #lasso exhaustive grid cross validation ;  ElasticNet;  lasso could also help feature selection
+    def crossValidationGridLasso(self, x, y):
+        lasso = Lasso(random_state=0)
+        alphas = np.logspace(-4, -0.5, 30)
+        tuned_parameters = [{'alpha': alphas}]
+        n_folds = 5
+        clf = GridSearchCV(lasso, tuned_parameters, cv=n_folds, refit=False)
+        clf.fit(x, y)
+        scores = clf.cv_results_['mean_test_score']
+        scores_std = clf.cv_results_['std_test_score']
+        plt.figure().set_size_inches(8, 6)
+        plt.semilogx(alphas, scores)
+
+        # plot error lines showing +/- std. errors of the scores
+        std_error = scores_std / np.sqrt(n_folds)
+
+        plt.semilogx(alphas, scores + std_error, 'b--')
+        plt.semilogx(alphas, scores - std_error, 'b--')
+
+        # alpha=0.2 controls the translucency of the fill color
+        plt.fill_between(alphas, scores + std_error, scores - std_error, alpha=0.2)
+
+        plt.ylabel('CV score +/- std error')
+        plt.xlabel('alpha')
+        plt.axhline(np.max(scores), linestyle='--', color='.5')
+        plt.xlim([alphas[0], alphas[-1]])
     
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
