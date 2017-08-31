@@ -45,6 +45,7 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.feature_selection import VarianceThreshold
 
+from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
 
@@ -100,7 +101,7 @@ class predictLR:
         print ("after preprocessing df head2: ", df.shape, df.head())          #df.dtypes
         
         #begin feature slection 
-        df = self.featureSelection01(df)
+        df = self.featureSelectionVariance01(df)
         
         print ("after feature selection df head3: ", df.shape, df.head())
 
@@ -294,15 +295,24 @@ class predictLR:
     
         return lm
     
-    #genearl cross validation
+    #genearl cross validation 
     def crossValidation(self, x, y):
-        kf = KFold(n_splits=5, random_state=None, shuffle=False)
+        #X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2)
+        
+        #print ("crossValidation train: ", X_train.shape, y_train.shape)
+        #print ("crossValidation test: ", X_test.shape, y_test.shape)
+
+        kf = KFold(n_splits=2, random_state=None, shuffle=False)
 
         for train_index, test_index in kf.split(x):
             print("TRAIN:", train_index, "TEST:", test_index)
             x_train, x_test = x[train_index], x[test_index]
             y_train, y_test = y[train_index], y[test_index]
 
+   
+    #lasso cross validation ;  ElasticNet
+    
+    
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
         #use cross validation; split the data 8:2 ratio?
