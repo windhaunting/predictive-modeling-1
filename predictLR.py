@@ -48,6 +48,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
+from sklearn.linear_model import LassoCV
 
 from commons import get_series_ids
 
@@ -190,7 +191,7 @@ class predictLR:
     def featureSelectionVariance01(self, df):
         #filter method
         #use variance:
-        varSelector = VarianceThreshold()                #threshold=0.1)
+        varSelector = VarianceThreshold()                #threshold=0.1) select features variances bigger than threshold 
         
         varSelector.fit_transform(df)
         #idxs = varSelector.get_support(indices=True)
@@ -258,15 +259,21 @@ class predictLR:
         axes[0,1].set_title('Occupation')
         '''
     
-    #analyse and visualize data after training
-    def plotExploreDataAfterTrain(self, y_pred, y_true):
+    #analyse and visualize data after training; residualPlot
+    def plotResidualAfterTrain(self, y_pred, y_true):
         #plot residual plot
         plt.rcParams['agg.path.chunksize'] = 10000
         print ("len y_pred, y_true: ", len(y_pred), len(y_true))
         #plt.scatter(x_test, y_test,  color='black')
-        plt.plot(y_pred, y_true-y_pred, color='blue', linewidth=3)
+        plt.plot(y_pred, y_true-y_pred, color='blue', linewidth=3)  #
         plt.show()
         
+    #plot general figure common AfterTrain
+    def plotCommonAfterTrain(self, y_pred, y_true):
+        plt.scatter(y_true, y_pred)
+        plt.xlabel("True Values")
+        plt.ylabel("Predictions")
+
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self, df):
         trainX = df.drop(['Purchase'], axis=1)         #all X data
@@ -299,20 +306,27 @@ class predictLR:
     def crossValidation(self, x, y, lm):
         #X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2)
         
- 
-
-        kf = KFold(n_splits=5, random_state=None, shuffle=False)
-
+        n_fold = 5
+        kf = KFold(n_splits=n_fold, random_state=None, shuffle=False)
+        p = np.zeros_like(y)
         for train_index, test_index in kf.split(x):
             print("TRAIN:", train_index, "TEST:", test_index)
             x_train, x_test = x.loc[train_index], x.loc[test_index]
             y_train, y_test = y.loc[train_index], y.loc[test_index]
             
-            print ("crossValidation train shape: ", trainX.shape, testX.shape)
-            print ("crossValidation test shape: ", trainY.shape, testY.shape)
+            #print ("crossValidation train shape: ", x_train.shape, x_test.shape)
+            #print ("crossValidation test shape: ", y_train.shape, y_test.shape)
             lm.fit(x_train, y_train)
+            p[test_index] = lm.predict(x_test)
+         
+        rmse_cv = np.sqrt(mean_squared_error(p, y))   #root mean square error
+        print('RMSE on 5-fold CV: {:.2}'.format(rmse_cv))
+        #self.plotCommonAfterTrain(p, y)
+        self.plotResidualAfterTrain(p, y)
+        
     #lasso cross validation ;  ElasticNet
-    
+    def crossValidationLasso(self, x, y):
+        x = 1
     
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
