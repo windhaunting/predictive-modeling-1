@@ -160,6 +160,7 @@ class predictLR:
         #drop rows with all NaN
         df = df.dropna(axis=0, how='all', thresh=2)       #Keep only the rows with at least 2 non-na values:
         imputedArray = Imputer(missing_values="NaN", strategy='mean').fit_transform(df)
+        
         #df = pd.DataFrame(imputedArray, index=df.index, columns=df.columns)
         #fill na
         
@@ -267,7 +268,7 @@ class predictLR:
         
     #use data df to train model;  data[-1] is the train ground truth y values
     def trainModelData(self, df):
-        trainX = df.drop(['Purchase'], axis=1) 
+        trainX = df.drop(['Purchase'], axis=1)         #all X data
         
         trainY = df.Purchase
         lm = linear_model.LinearRegression(normalize=True, n_jobs=2)
@@ -282,18 +283,24 @@ class predictLR:
         
         y_pred = lm.predict(trainX)
         #get mean squared error
-        print (" means squared error: ", mean_squared_error(trainY, y_pred))          
+        print (" means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
+        print (" root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
+
         #plot residual
         #self.plotExploreDataAfterTrain(y_pred, trainY)
+        
+        #cross validation
+        self.crossValidation(trainX, trainY)
+    
         return lm
     
     #genearl cross validation
-    def crossValidation(self):
-        kf = KFold(n_splits=2, random_state=None, shuffle=False)
+    def crossValidation(self, x, y):
+        kf = KFold(n_splits=5, random_state=None, shuffle=False)
 
-        for train_index, test_index in kf.split(X):
+        for train_index, test_index in kf.split(x):
             print("TRAIN:", train_index, "TEST:", test_index)
-            X_train, X_test = X[train_index], X[test_index]
+            x_train, x_test = x[train_index], x[test_index]
             y_train, y_test = y[train_index], y[test_index]
 
     #split original input data to tain and test data to do cross validation etc
@@ -316,7 +323,7 @@ def main():
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
-    #lm = preLRObj.trainModelData(df)
+    lm = preLRObj.trainModelData(df)
     
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
