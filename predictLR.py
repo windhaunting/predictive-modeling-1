@@ -330,7 +330,7 @@ class predictLR:
     #lasso exhaustive grid cross validation ;  ElasticNet;  lasso could also help feature selection
     def crossValidationGridLasso(self, x, y):
         lasso = Lasso(random_state=0)
-        alphas = np.logspace(-4, -0.5, 30)
+        alphas = np.logspace(-4, 0, 30)
         tuned_parameters = [{'alpha': alphas}]
         n_folds = 5
         clf = GridSearchCV(lasso, tuned_parameters, cv=n_folds, refit=False)
