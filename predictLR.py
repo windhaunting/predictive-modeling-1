@@ -28,7 +28,6 @@ Output the results
 #http://www.ritchieng.com/machinelearning-one-hot-encoding/
 #https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
 
-from sklearn import linear_model
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -48,8 +47,10 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
-from sklearn.linear_model import LassoCV
+from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Lasso
+from sklearn.linear_model import LassoCV
+
 from sklearn.model_selection import GridSearchCV
 
 from commons import get_series_ids
@@ -276,12 +277,12 @@ class predictLR:
         plt.xlabel("True Values")
         plt.ylabel("Predictions")
 
-    #use data df to train model;  data[-1] is the train ground truth y values
-    def trainModelData(self, df):
+    #use data df to train general linear regression model;  data[-1] is the train ground truth y values
+    def trainLinearRegModelData(self, df):
         trainX = df.drop(['Purchase'], axis=1)         #all X data
         
         trainY = df.Purchase
-        lm = linear_model.LinearRegression(normalize=True, n_jobs=2)
+        lm = LinearRegression(normalize=True, n_jobs=2)
 
         lm.fit(trainX, trainY)
         print("Estimated intercept: ", lm.intercept_, "coeff len: ", len(lm.coef_))
@@ -295,6 +296,44 @@ class predictLR:
         #get mean squared error
         print (" means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
         print (" root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
+
+        #plot residual
+        #self.plotExploreDataAfterTrain(y_pred, trainY)
+        
+        #cross validation
+        self.crossValidation(trainX, trainY, lm)
+        self.crossValidationGridLasso(trainX, trainY)
+        
+        #after lasso feature selection
+
+        #get mean squared error
+       # print (" after lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
+       # print (" after lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
+
+        return lm
+    
+    
+    #def train
+    
+     #use regularization lasso linear regression model;  data[-1] is the train ground truth y values
+    def trainLinearRegModelDataWithLasso(self, df, alpha):
+        trainX = df.drop(['Purchase'], axis=1)         #all X data
+        
+        trainY = df.Purchase
+        lm = Lasso(normalize=True, n_jobs=2)
+
+        lm.fit(trainX, trainY)
+        print("Estimated intercept: ", lm.intercept_, "coeff len: ", len(lm.coef_))
+        
+        #construct a data frame that contains features and estimated coefficients.
+        featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
+        print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
+        print ("trainModel r2 score: ", lm.score(trainX, trainY))
+        
+        y_pred = lm.predict(trainX)
+        #get mean squared error
+        print ("Lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
+        print ("Lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
 
         #plot residual
         #self.plotExploreDataAfterTrain(y_pred, trainY)
@@ -368,6 +407,8 @@ class predictLR:
         
         return clf
     
+    
+    
     #split original input data to tain and test data to do cross validation etc
     def validationModel(self, df):
         #use cross validation; split the data 8:2 ratio?
@@ -388,7 +429,7 @@ def main():
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
-    lm = preLRObj.trainModelData(df)
+    lm = preLRObj.trainLinearRegModelData(df)
     
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
