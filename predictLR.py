@@ -75,7 +75,7 @@ class predictLR:
         print (df.head(3))
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
-        print("np mean: ",df.Purchase.describe())
+        #print("np mean: ",df.Purchase.describe())
         #show NaN ratio
         #for col in df:
         #    print ('readCleanInputData col: ' , col, ": ", df[col].value_counts(dropna=False))
@@ -249,7 +249,10 @@ class predictLR:
         plt.show()
         '''
         plt.figure()
-        df['Purchase'].plot()
+        #df['Purchase'].plot()
+
+        plt.hist(df['Purchase'], normed=True, bins=30)
+        plt.ylabel('Probability');
 
         '''
         fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 10))
@@ -320,7 +323,7 @@ class predictLR:
         cf = self.crossValidationGridLasso(trainX, trainY)
         
         #after lasso feature selection
-        alpha = 0          # cf.best_params_['alpha']        
+        alpha = 0.1          # cf.best_params_['alpha']        
         
         lmLasso = Lasso(alpha = alpha, normalize=True)
 
@@ -420,9 +423,11 @@ def main():
     preLRObj = predictLR()
     inputFile = "../input_data1/train.csv"
     df = preLRObj.readPreprocessData(inputFile)
-    #preLRObj.plotExploreData(df)
-    lm = preLRObj.trainLinearRegModelData(df)
+    #preLRObj.plotExploreDataPreTrain(df)
+    #lm = preLRObj.trainLinearRegModelData(df)
     lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
+    
+    #test final test data
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
 if __name__== "__main__":
