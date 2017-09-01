@@ -75,7 +75,7 @@ class predictLR:
         print (df.head(3))
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
-        
+        print("np mean: ",df.Purchase.describe())
         #show NaN ratio
         #for col in df:
         #    print ('readCleanInputData col: ' , col, ": ", df[col].value_counts(dropna=False))
@@ -108,7 +108,6 @@ class predictLR:
         df = self.featureSelectionVariance01(df)
         
         print ("after feature selection df head3: ", df.shape, df.head())
-
 
         return df
     
@@ -317,11 +316,11 @@ class predictLR:
         trainY = df.Purchase
         
              #cross validation
-        #self.crossValidation(trainX, trainY, lm)
+        #self.crossValidation(trainX, trainY, lm)t
         cf = self.crossValidationGridLasso(trainX, trainY)
         
         #after lasso feature selection
-        alpha = cf.best_params_['alpha']        
+        alpha = 0          # cf.best_params_['alpha']        
         
         lmLasso = Lasso(alpha = alpha, normalize=True)
 
