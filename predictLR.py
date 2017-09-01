@@ -300,37 +300,40 @@ class predictLR:
         #plot residual
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         
-        #cross validation
-        self.crossValidation(trainX, trainY, lm)
-        self.crossValidationGridLasso(trainX, trainY)
-        
-        #after lasso feature selection
-
+   
         #get mean squared error
        # print (" after lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
        # print (" after lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
-
         return lm
     
     
     #def train
     
      #use regularization lasso linear regression model;  data[-1] is the train ground truth y values
-    def trainLinearRegModelDataWithLasso(self, df, alpha):
+    def trainLinearRegModelDataWithLasso(self, df):
+                
         trainX = df.drop(['Purchase'], axis=1)         #all X data
         
         trainY = df.Purchase
-        lm = Lasso(normalize=True, n_jobs=2)
+        
+             #cross validation
+        #self.crossValidation(trainX, trainY, lm)
+        cf = self.crossValidationGridLasso(trainX, trainY)
+        
+        #after lasso feature selection
+        alpha = cf.best_params_['alpha']        
+        
+        lmLasso = Lasso(alpha = alpha, normalize=True)
 
-        lm.fit(trainX, trainY)
-        print("Estimated intercept: ", lm.intercept_, "coeff len: ", len(lm.coef_))
+        lmLasso.fit(trainX, trainY)
+        print("Estimated intercept: ", lmLasso.intercept_, "coeff len: ", len(lmLasso.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
-        featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
+        featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lmLasso.coef_)), columns = ["feature", "estimatedCoeffcients"])
         print ("trainModel,featureCoeffDf df  ", featureCoeffDf)
-        print ("trainModel r2 score: ", lm.score(trainX, trainY))
+        print ("trainModel r2 score: ", lmLasso.score(trainX, trainY))
         
-        y_pred = lm.predict(trainX)
+        y_pred = lmLasso.predict(trainX)
         #get mean squared error
         print ("Lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
         print ("Lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
@@ -338,17 +341,7 @@ class predictLR:
         #plot residual
         #self.plotExploreDataAfterTrain(y_pred, trainY)
         
-        #cross validation
-        self.crossValidation(trainX, trainY, lm)
-        self.crossValidationGridLasso(trainX, trainY)
-        
-        #after lasso feature selection
-
-        #get mean squared error
-       # print (" after lasso means squared error: ", mean_squared_error(trainY, y_pred))    #mean squared error
-       # print (" after lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
-
-        return lm
+        return lmLasso
     
     #genearl cross validation 
     def crossValidation(self, x, y, lm):
@@ -358,7 +351,7 @@ class predictLR:
         kf = KFold(n_splits=n_folds, random_state=None, shuffle=False)
         p = np.zeros_like(y)
         for train_index, test_index in kf.split(x):
-            print("TRAIN:", train_index, "TEST:", test_index)
+            #print("TRAIN:", train_index, "TEST:", test_index)
             x_train, x_test = x.loc[train_index], x.loc[test_index]
             y_train, y_test = y.loc[train_index], y.loc[test_index]
             
@@ -430,7 +423,7 @@ def main():
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreData(df)
     lm = preLRObj.trainLinearRegModelData(df)
-    
+    lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
     #testInFile = "../input_data1/test.csv"
     #preLRObj.testOutputModel(testInFile, lm)
 if __name__== "__main__":
