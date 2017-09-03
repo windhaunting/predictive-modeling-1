@@ -52,6 +52,7 @@ from sklearn.linear_model import Lasso
 from sklearn.linear_model import LassoCV
 
 from sklearn.model_selection import GridSearchCV
+from scipy.stats import pearsonr
 
 from commons import get_series_ids
 
@@ -204,9 +205,10 @@ class predictLR:
         print("featureSelectionVariance01 df: ", df.shape)
         return df
     
-    #Filter use correlation statistics to do feature selection;  suitable only for linear relationship
+    #Filter use linear correlation statistics to do feature selection;  suitable only for linear relationship
     def featureSelectionFilterCorrelation02(self, df):
         x = 2
+        
         
     #use mutual information to do feature selection.
     #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
