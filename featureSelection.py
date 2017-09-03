@@ -16,11 +16,11 @@ from itertools import combinations
 
 
             
-#Filter use variance statistics to do feature selection
-def featureSelectionFilterVariance01(self, df):
+#Filter use variance statistics to do feature selection, select ones bigger than bigger than threshold
+def featureSelectionFilterVariance01(df, threshold):
     #filter method
     #use variance:
-    varSelector = VarianceThreshold()                #threshold=0.1) select features variances bigger than threshold 
+    varSelector = VarianceThreshold(threshold)        # threshold = 0.1;  select features variances bigger than threshold 
     
     varSelector.fit_transform(df)
     #idxs = varSelector.get_support(indices=True)
@@ -33,21 +33,24 @@ def featureSelectionFilterVariance01(self, df):
 
 
 #Filter use linear correlation statistics to do feature selection;  suitable only for linear relationship
-def featureSelectionFilterCorrelation02(self, df):
+def featureSelectionFilterCorrelation02(df, threshold):
     #get column list
     # 1st calculate the feature pair; 2nd use X -> y;   df contains X and y
+    df = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
+
     correlations = {}
     columns = df.columns.tolist()
     
     for col_a, col_b in combinations(columns, 2):
         correlations[col_a + '__' + col_b] = pearsonr(df.loc[:, col_a], df.loc[:, col_b])
 
-    result = pd.from_dict(correlations, orient='index')
+    result = pd.DataFrame.from_dict(correlations, orient='index')
     result.columns = ['PCC', 'p-value']
     
+    print ("featureSelectionFilterCorrelation02 result: ", result)
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
 #calculate feature vs predict value for regression model, filter too low NMI value
-def featureSelectionMutualInfo03(self, df):
+def featureSelectionMutualInfo03(df):
     x = 1
     

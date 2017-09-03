@@ -53,6 +53,9 @@ from sklearn.linear_model import LassoCV
 from sklearn.model_selection import GridSearchCV
 
 from commons import get_series_ids
+from featureSelection import featureSelectionFilterVariance01
+from featureSelection import featureSelectionFilterCorrelation02
+
 
 class predictLR:
  
@@ -104,10 +107,11 @@ class predictLR:
         print ("after preprocessing df head2: ", df.shape, df.head())          #df.dtypes
         
         #begin feature slection 
-        df = self.featureSelectionVariance01(df)
+        df = featureSelectionFilterVariance01(df, 0)
         
         print ("after feature selection df head3: ", df.shape, df.head())
 
+        featureSelectionFilterCorrelation02(df, 0.8)
         return df
     
     
@@ -406,7 +410,7 @@ def main():
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreDataPreTrain(df)
     #lm = preLRObj.trainLinearRegModelData(df)
-    lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
+    #lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
     
     #test final test data
     #testInFile = "../input_data1/test.csv"
