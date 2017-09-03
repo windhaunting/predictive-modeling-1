@@ -51,7 +51,6 @@ from sklearn.linear_model import Lasso
 from sklearn.linear_model import LassoCV
 
 from sklearn.model_selection import GridSearchCV
-from scipy.stats import pearsonr
 
 from commons import get_series_ids
 
