@@ -189,8 +189,8 @@ class predictLR:
         
         return rangeScalerArray
         
-    #use variance statistics to do feature selection
-    def featureSelectionVariance01(self, df):
+    #Filter use variance statistics to do feature selection
+    def featureSelectionFilterVariance01(self, df):
         #filter method
         #use variance:
         varSelector = VarianceThreshold()                #threshold=0.1) select features variances bigger than threshold 
@@ -204,11 +204,13 @@ class predictLR:
         print("featureSelectionVariance01 df: ", df.shape)
         return df
     
-    #use correlation statistics to do feature selection;  suitable only for linear relationship
-    def featureSelectionCorrelation02(self, df):
+    #Filter use correlation statistics to do feature selection;  suitable only for linear relationship
+    def featureSelectionFilterCorrelation02(self, df):
         x = 2
         
     #use mutual information to do feature selection.
+    #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
+    #calculate feature vs predict value for regression model, filter too low NMI value
     def featureSelectionMutualInfo03(self, df):
         x = 1
     
