@@ -8,8 +8,11 @@ Created on Sun Sep  3 18:38:42 2017
 
 #feature selection module
 #show feature selection methods here
+import pandas as pd
+
 from sklearn.feature_selection import VarianceThreshold
 from scipy.stats import pearsonr
+from itertools import combinations
 
 
             
@@ -36,10 +39,11 @@ def featureSelectionFilterCorrelation02(self, df):
     correlations = {}
     columns = df.columns.tolist()
     
-    for col_a, col_b in itertools.combinations(columns, 2):
+    for col_a, col_b in combinations(columns, 2):
         correlations[col_a + '__' + col_b] = pearsonr(df.loc[:, col_a], df.loc[:, col_b])
 
-    
+    result = pd.from_dict(correlations, orient='index')
+    result.columns = ['PCC', 'p-value']
     
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
