@@ -201,12 +201,16 @@ class predictLR:
         
         df = df.iloc[:, varSelector.get_support(indices=False)]
         #return varArray, idxs
+        print("featureSelectionVariance01 df: ", df.shape)
         return df
     
-    #use correlation statistics to do feature selection
+    #use correlation statistics to do feature selection;  suitable only for linear relationship
     def featureSelectionCorrelation02(self, df):
         x = 2
         
+    #use mutual information to do feature selection.
+    def featureSelectionMutualInfo03(self, df):
+        x = 1
     
     #analyse and visualize data before training
     def plotExploreDataPreTrain(self, df):
