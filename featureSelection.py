@@ -53,6 +53,7 @@ def featureSelectionFilterCorrelation02(df, threshold):
     print ("featureSelectionFilterCorrelation02 result: ", dfCorr)
     
     #select one of the features in the feature pair with the absolute PCC larger than threshold
+    dfCorr = dfCorr[dfCorr['PCC'] > threshold]
     
     
 #use mutual information to do feature selection.
