@@ -51,7 +51,9 @@ def featureSelectionFilterCorrelation02(df, threshold):
     
     print ("featureSelectionFilterCorrelation02 result: ", result)
     
-
+    #select one of the features in the feature pair with the absolute PCC larger than threshold
+    
+    
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
 #calculate feature vs predict value for regression model, filter too low NMI value
