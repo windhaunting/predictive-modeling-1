@@ -12,7 +12,7 @@ import pandas as pd
 
 from sklearn.feature_selection import VarianceThreshold
 from scipy.stats import pearsonr
-from itertools import combinations
+from itertools import combinations, chain
 
 
             
@@ -56,6 +56,10 @@ def featureSelectionFilterCorrelation02(df, threshold):
     dfCorr = dfCorr[dfCorr['PCC'] <= threshold]
     print ("featureSelectionFilterCorrelation02 result2: ", dfCorr.index.tolist(), dfCorr.shape)
     
+    colLsts = [f.split("__") for f in dfCorr.index.tolist()]
+    cols = set(chain(*colLsts))
+    print ("cols:    ", len(cols))
+    df = df[cols]
     
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
