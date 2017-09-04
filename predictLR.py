@@ -74,7 +74,8 @@ class predictLR:
             #print ("val_count:", df[col].value_counts())
         
         #print ("describe: ", df.describe())
-        print (df.head(3))
+        print ("original shape ", df.head(3), df.shape)
+        
         #print("readCleanInputData: pur: ", df['Purchase'].describe())
         #df['Purchase'].plot.bar()
         #print("np mean: ",df.Purchase.describe())
@@ -84,14 +85,15 @@ class predictLR:
         print (" NaN ratio: ", len(df), (len(df)-df.count())/len(df))
         
         #show unique 
-        print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
+        #print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
        
         #drop column Product_Category_3 due to too many nan
-        df.drop(['User_ID', 'Product_ID'], axis=1) 
-        df.drop(['Product_Category_3'], axis=1) 
+        df.drop(['User_ID', 'Product_ID', 'Product_Category_3'], axis=1, inplace=True) 
        
         #fill na or drop na
-
+        print ("drop first shape ", df.shape)
+        
+        
         #df = self.dummyEncodeMethod1(df)
         df = self.dummyEncodeMethod2(df)
         #print ("after preprocessing df head2: ", df.describe())      
@@ -103,7 +105,6 @@ class predictLR:
 
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
         
-        '''
         df = pd.DataFrame(array, index=df.index, columns=df.columns)
         print ("after preprocessing df head2: ", df.shape, df.head())          #df.dtypes
         
@@ -112,8 +113,8 @@ class predictLR:
         
         print ("after feature selection df head3: ", df.shape, df.head())
 
-        #featureSelectionFilterCorrelation02(df, 0.8)
-        '''
+        featureSelectionFilterCorrelation02(df, 0.8)
+        
         return df
     
     
@@ -134,7 +135,7 @@ class predictLR:
 
         #*** drop previous categorical columns
         #X.columns
-        df = df.drop(X.columns, axis=1, inplace=True)
+        df.drop(X.columns, axis=1, inplace=True)
 
         #OneHotEncoder
         #Encode categorical integer features using a one-hot aka one-of-K scheme.
@@ -158,7 +159,7 @@ class predictLR:
         dfDummy = pd.get_dummies(categoDf)      #crete dummy variable or df factorize();    vs scikit-learn preprocessing Encoder
 
         #drop previous categorical columns
-        df1 = df.drop(categoDf, axis=1) 
+        df1 = df.drop(categoDf, axis=1, inplace=True) 
 
         df = pd.concat([df1, dfDummy], axis=1)
 
@@ -268,7 +269,7 @@ class predictLR:
 
     #use data df to train general linear regression model;  data[-1] is the train ground truth y values
     def trainLinearRegModelData(self, df):
-        trainX = df.drop(['Purchase'], axis=1)         #all X data
+        trainX = df.drop(['Purchase'], axis=1)         #inplace false all X data
         
         trainY = df.Purchase
         lm = LinearRegression(normalize=True, n_jobs=2)

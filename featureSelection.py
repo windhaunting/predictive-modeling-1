@@ -38,8 +38,9 @@ def featureSelectionFilterCorrelation02(df, threshold):
     # 1st calculate the feature pair; 2nd use X -> y;   df contains X and y
     y = df.iloc[:,-1]       #y column
     #dfX = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
-    #df.drop(df.columns[[-1,]], axis=1, inplace=True)
-    df.drop(df.columns[-1], axis=1)
+    #df.drop(df.columns[[-1,]], axis=1, inplace=True) df.drop(df.index[2])
+
+    df.drop(df.columns[-1], axis=1, inplace=True)         
     correlations = {}
     columns = df.columns.tolist()
     
