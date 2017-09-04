@@ -47,10 +47,10 @@ def featureSelectionFilterCorrelation02(df, threshold):
     for col_a, col_b in combinations(columns, 2):
         correlations[col_a + '__' + col_b] = pearsonr(df.loc[:, col_a], df.loc[:, col_b])
 
-    result = pd.DataFrame.from_dict(correlations, orient='index')
-    result.columns = ['PCC', 'p-value']
+    dfCorr = pd.DataFrame.from_dict(correlations, orient='index')
+    dfCorr.columns = ['PCC', 'p-value']
     
-    print ("featureSelectionFilterCorrelation02 result: ", result)
+    print ("featureSelectionFilterCorrelation02 result: ", dfCorr)
     
     #select one of the features in the feature pair with the absolute PCC larger than threshold
     
@@ -58,6 +58,6 @@ def featureSelectionFilterCorrelation02(df, threshold):
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
 #calculate feature vs predict value for regression model, filter too low NMI value
-def featureSelectionMutualInfo03(df):
+def featureSelectionFilterMutualInfo03(df):
     x = 1
     
