@@ -36,8 +36,10 @@ def featureSelectionFilterVariance01(df, threshold):
 def featureSelectionFilterCorrelation02(df, threshold):
     #get column list
     # 1st calculate the feature pair; 2nd use X -> y;   df contains X and y
-    df = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
-
+    y = df.iloc[:,-1]       #y column
+    #dfX = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
+    #df.drop(df.columns[[-1,]], axis=1, inplace=True)
+    df.drop(df.columns[-1], axis=1)
     correlations = {}
     columns = df.columns.tolist()
     
@@ -48,6 +50,8 @@ def featureSelectionFilterCorrelation02(df, threshold):
     result.columns = ['PCC', 'p-value']
     
     print ("featureSelectionFilterCorrelation02 result: ", result)
+    
+
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
 #calculate feature vs predict value for regression model, filter too low NMI value

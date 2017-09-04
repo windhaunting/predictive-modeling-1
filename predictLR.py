@@ -87,8 +87,8 @@ class predictLR:
         print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
         
         #drop column Product_Category_3 due to too many nan
-        df = df.drop(['User_ID', 'Product_ID'], axis=1) 
-        df = df.drop(['Product_Category_3'], axis=1) 
+        df.drop(['User_ID', 'Product_ID'], axis=1) 
+        df.drop(['Product_Category_3'], axis=1) 
         
         #fill na or drop na
 
@@ -132,7 +132,7 @@ class predictLR:
 
         #*** drop previous categorical columns
         #X.columns
-        df.drop(X.columns, axis=1, inplace=True)
+        df = df.drop(X.columns, axis=1, inplace=True)
 
         #OneHotEncoder
         #Encode categorical integer features using a one-hot aka one-of-K scheme.
