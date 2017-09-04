@@ -85,11 +85,11 @@ class predictLR:
         
         #show unique 
         print ('Product_Category_3 len: ', len(df.Product_Category_3.unique()))
-        
+       
         #drop column Product_Category_3 due to too many nan
         df.drop(['User_ID', 'Product_ID'], axis=1) 
         df.drop(['Product_Category_3'], axis=1) 
-        
+       
         #fill na or drop na
 
         #df = self.dummyEncodeMethod1(df)
@@ -103,6 +103,7 @@ class predictLR:
 
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
         
+        '''
         df = pd.DataFrame(array, index=df.index, columns=df.columns)
         print ("after preprocessing df head2: ", df.shape, df.head())          #df.dtypes
         
@@ -111,7 +112,8 @@ class predictLR:
         
         print ("after feature selection df head3: ", df.shape, df.head())
 
-        featureSelectionFilterCorrelation02(df, 0.8)
+        #featureSelectionFilterCorrelation02(df, 0.8)
+        '''
         return df
     
     
