@@ -50,10 +50,11 @@ def featureSelectionFilterCorrelation02(df, threshold):
     dfCorr = pd.DataFrame.from_dict(correlations, orient='index')
     dfCorr.columns = ['PCC', 'p-value']
     
-    print ("featureSelectionFilterCorrelation02 result: ", dfCorr)
+    print ("featureSelectionFilterCorrelation02 result1: ", dfCorr, dfCorr.shape)
     
     #select one of the features in the feature pair with the absolute PCC larger than threshold
-    dfCorr = dfCorr[dfCorr['PCC'] > threshold]
+    dfCorr = dfCorr[dfCorr['PCC'] <= threshold]
+    print ("featureSelectionFilterCorrelation02 result2: ", dfCorr.index.tolist(), dfCorr.shape)
     
     
 #use mutual information to do feature selection.
