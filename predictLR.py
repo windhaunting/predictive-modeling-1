@@ -93,14 +93,16 @@ class predictLR:
         #fill na or drop na
         print ("drop first shape ", df.shape)
         
-        
+        print ("dropna ttdf: ",  df.shape)
         #df = self.dummyEncodeMethod1(df)
         df = self.dummyEncodeMethod2(df)
         #print ("after preprocessing df head2: ", df.describe())      
-           
+        print ("dummyEncodeMethod2 df: ", df.shape, df.head(2))
+        
         array = self.preprocessNANMethod(df)
         print ("dropna df shape ", df.shape)
-        
+       
+
         array = self.preprocessTransform(array) 
 
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
@@ -159,9 +161,10 @@ class predictLR:
         dfDummy = pd.get_dummies(categoDf)      #crete dummy variable or df factorize();    vs scikit-learn preprocessing Encoder
 
         #drop previous categorical columns
-        df1 = df.drop(categoDf, axis=1, inplace=True) 
+        df.drop(categoDf, axis=1, inplace=True) 
 
-        df = pd.concat([df1, dfDummy], axis=1)
+        df = pd.concat([dfDummy, df], axis=1)           #get purchase as the last column
+
 
         return df
         
