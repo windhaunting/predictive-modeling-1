@@ -57,9 +57,10 @@ def featureSelectionFilterCorrelation02(df, threshold):
     print ("featureSelectionFilterCorrelation02 result2: ", dfCorr.index.tolist(), dfCorr.shape)
     
     colLsts = [f.split("__") for f in dfCorr.index.tolist()]
-    cols = set(chain(*colLsts))
+    cols = list(set(chain(*colLsts)))
     print ("cols:    ", len(cols))
     df = df[cols]
+    print("featureSelectionFilterCorrelation02 df: ", df.shape)
     
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
