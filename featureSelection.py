@@ -10,6 +10,7 @@ Created on Sun Sep  3 18:38:42 2017
 #http://scikit-learn.org/stable/modules/feature_selection.html
 #show feature selection methods here
 import pandas as pd
+import numpy as np
 
 from sklearn.feature_selection import VarianceThreshold
 from scipy.stats import pearsonr
@@ -99,10 +100,9 @@ def featureSelectionFilterMutualInfo03(df, threshold):
 def featureSelectionFilterKBest(df, k):
     X = df.drop(['Purchase'], axis=1)            # inplace=True)
     Y = df['Purchase']                 #slicing create 2D list;
-    
     print ('featureSelectionFilterKBest: ', X.head(5), Y)
     XSelector= SelectKBest(chi2, k)
-    XSelector.fit_transform(X.values, Y[:,])
+    XSelector.fit_transform(X.values, Y)
     
     #df = pd.concat([df[cols], Y], axis=1)
     dfXNew = df.iloc[:, XSelector.get_support(indices=False)]
