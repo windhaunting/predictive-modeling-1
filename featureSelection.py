@@ -16,8 +16,8 @@ from scipy.stats import pearsonr
 from itertools import combinations, chain
 from sklearn.metrics.cluster import normalized_mutual_info_score
 
-from sklearn.feature_selection import RFE
-            
+from sklearn.feature_selection import SelectKBest, chi2, RFE
+
 #Filter use variance statistics to do feature selection, select ones bigger than bigger than threshold
 def featureSelectionFilterVariance01(df, threshold):
     #filter method
@@ -39,7 +39,7 @@ def featureSelectionFilterCorrelation02(df, threshold):
     #get column list
     # 1st calculate the feature pair; 2nd use X -> y;   df contains X and y
     print ("featureSelectionFilterCorrelation02 df column", len(df.columns))
-    y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
+    Y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
     #dfX = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
     #df.drop(df.columns[[-1,]], axis=1, inplace=True) df.drop(df.index[2])
     
@@ -63,7 +63,7 @@ def featureSelectionFilterCorrelation02(df, threshold):
     colLsts = [f.split("__") for f in dfCorr.index.tolist()]
     cols = list(set(chain(*colLsts)))
     print ("cols:    ", len(cols))
-    df = pd.concat([df[cols], y], axis=1)
+    df = pd.concat([df[cols], Y], axis=1)
     print("featureSelectionFilterCorrelation02 final df: ", df.shape, df.columns)   #df['Purchase'])
     
     return df
@@ -73,7 +73,7 @@ def featureSelectionFilterCorrelation02(df, threshold):
 #calculate feature vs predict value for regression model, filter too low NMI value
 def featureSelectionFilterMutualInfo03(df, threshold):
     print ("featureSelectionFilterMutualInfo03 df column", len(df.columns))
-    y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
+    Y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
     
     df.drop(df.columns[-1], axis=1, inplace=True)    #df.drop(df['Purchase'], axis=1, inplace=True)
     
@@ -91,9 +91,22 @@ def featureSelectionFilterMutualInfo03(df, threshold):
     colLsts = [f.split("__") for f in dfMI.index.tolist()]
     cols = list(set(chain(*colLsts)))
     print ("cols:    ", len(cols))
-    df = pd.concat([df[cols], y], axis=1)
+    df = pd.concat([df[cols], Y], axis=1)
     print("featureSelectionFilterMutualInfo03 final df: ", df.shape, df.columns)   #df['Purchase'])
     
+    return df
+
+def featureSelectionFilterKBest(df, k):
+    Y = df.iloc[:,-1]  
+    X = df.drop(df.columns[-1], axis=1, inplace=False)            # inplace=True)
+    
+    XSelector= SelectKBest(chi2, k)
+    XSelector.fit_transform(X, Y)
+    
+    #df = pd.concat([df[cols], Y], axis=1)
+    dfXNew = df.iloc[:, XSelector.get_support(indices=False)]
+    df = pd.concat([dfXNew, Y], axis=1)
+
     return df
 
 #based on RFE method; embedded

@@ -53,7 +53,8 @@ from sklearn.linear_model import LassoCV
 from sklearn.model_selection import GridSearchCV
 
 from commons import get_series_ids
-from featureSelection import featureSelectionFilterVariance01, featureSelectionFilterCorrelation02, featureSelectionFilterMutualInfo03
+from featureSelection import featureSelectionFilterVariance01, featureSelectionFilterCorrelation02, featureSelectionFilterMutualInfo03,featureSelectionFilterKBest
+
 
 
 class predictLR:
@@ -116,8 +117,8 @@ class predictLR:
 
         #df = featureSelectionFilterCorrelation02(df, 0.8)
         
-        df = featureSelectionFilterMutualInfo03(df, 0.8)
-        
+        #df = featureSelectionFilterMutualInfo03(df, 0.8)
+        df = featureSelectionFilterKBest(df, 10)
         return df
     
     
