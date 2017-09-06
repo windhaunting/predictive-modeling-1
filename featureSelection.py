@@ -99,17 +99,17 @@ def featureSelectionFilterMutualInfo03(df, threshold):
 
 #wrapper select kbest using a function, such as chi2, f_regression to calculate x vs y
 def featureSelectionWrapperKBest(df, k):
-    X = df.drop(['Purchase'], axis=1)            # inplace=True)
-    Y = df['Purchase']                 #slicing create 2D list;
-    print ('featureSelectionWrapperKBest: ', X.head(5), Y.shape, Y.values[0])
-    '''
-    XSelector= SelectKBest(f_regression, k)
-    XSelector.fit_transform(X.values, Y.values)
+    X = df.drop(df.columns[-1], axis=1, inplace=False)            # inplace=True)
+    Y = df.iloc[:,-1]      #Y = df['Purchase']                 #slicing create 2D list;
+    print ('featureSelectionWrapperKBest: ', X.shape, Y.shape, )
+    
+    XSelector= SelectKBest(f_regression, k)            #chi2 error with unlabeled type
+    XSelector.fit_transform(X.values, Y.as_matrix())
     
     #df = pd.concat([df[cols], Y], axis=1)
     dfXNew = df.iloc[:, XSelector.get_support(indices=False)]
     df = pd.concat([dfXNew, Y], axis=1)
-    '''
+    print ('featureSelectionWrapperKBest final: ', df.shape)
     return df
 
 #based on RFE method; embedded

@@ -31,17 +31,9 @@ Output the results
 import pandas as pd
 import numpy as np
 import matplotlib
-from numpy import log1p
 
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import Imputer
-from sklearn.preprocessing import FunctionTransformer
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -53,9 +45,11 @@ from sklearn.linear_model import LassoCV
 from sklearn.model_selection import GridSearchCV
 
 from commons import get_series_ids
+
+from preprocessing import dummyEncodeMethod1, dummyEncodeMethod2, preprocessNANMethod, preprocessTransform, preprocessScaler
 from featureSelection import featureSelectionFilterVariance01, featureSelectionFilterCorrelation02, featureSelectionFilterMutualInfo03,featureSelectionWrapperKBest
 
-
+from visualizePlot import plotExploreDataPreTrain, plotResidualAfterTrain, plotCommonAfterTrain
 
 class predictLR:
  
@@ -94,16 +88,16 @@ class predictLR:
         print ("drop first shape ", df.shape)
         
         print ("dropna ttdf: ",  df.shape)
-        #df = self.dummyEncodeMethod1(df)
-        df = self.dummyEncodeMethod2(df)
+        #df = dummyEncodeMethod1(df)
+        df = dummyEncodeMethod2(df)
         #print ("after preprocessing df head2: ", df.describe())      
         print ("dummyEncodeMethod2 df: ", df.shape, df.head(2))
         
-        array = self.preprocessNANMethod(df)
+        array = preprocessNANMethod(df)
         print ("dropna df shape ", df.shape)
        
 
-        array = self.preprocessTransform(array) 
+        array = preprocessTransform(array) 
 
         #Array = self.preprocessScaler(array)               #scaling is sensitive to linear regression
         
@@ -121,166 +115,17 @@ class predictLR:
         df = featureSelectionWrapperKBest(df, 10)
         return df
     
-    
-    #use scikit-learn label and oneHotEncoder  -- method 1 
-    # --has bug  ValueError: setting an array element with a sequence when call this function
-
-    def dummyEncodeMethod1(self, df):
-       # limit to categorical data using df.select_dtypes()
-        X = df.select_dtypes(include=[object])
-        #df.shape
-        print ("X head: ", X.head(3))
-        
-        # encode labels with value between 0 and n_classes-1.
-        le = LabelEncoder()
-        # use df.apply() to apply le.fit_transform to all columns
-        X_2 = X.apply(le.fit_transform)
-        print ("X_2 head: ", X_2.head(3))
-
-        #*** drop previous categorical columns
-        #X.columns
-        df.drop(X.columns, axis=1, inplace=True)
-
-        #OneHotEncoder
-        #Encode categorical integer features using a one-hot aka one-of-K scheme.
-        enc = OneHotEncoder()
-        onehotlabels = enc.fit_transform(X_2)
-        
-        dfX2 = pd.DataFrame(onehotlabels, index=range(0,onehotlabels.shape[0]), columns = range(0,onehotlabels.shape[1]), dtype=object)       #random index here
-        
-        df2 = pd.concat([df, dfX2], axis=1)        
-        print ("onehotlabels.shape: ", onehotlabels.shape[1], df.shape, df2.shape, type(df2))
-        return df2
-        
-    
-    #use pands get_dummies  -- method 2
-    def dummyEncodeMethod2(self, df):
-        
-       # limit to categorical data using df.select_dtypes()
-        categoDf = df.select_dtypes(include=[object])
-        #df.shape
-        print ("categoDf head: ", categoDf.head(3))
-        dfDummy = pd.get_dummies(categoDf)      #crete dummy variable or df factorize();    vs scikit-learn preprocessing Encoder
-
-        #drop previous categorical columns
-        df.drop(categoDf, axis=1, inplace=True) 
-
-        df = pd.concat([dfDummy, df], axis=1)           #get purchase as the last column
-
-
-        return df
-        
-    #process missing value here
-    def preprocessNANMethod(self, df):
-        #drop rows with all NaN
-        df = df.dropna(axis=0, how='all', thresh=2)       #Keep only the rows with at least 2 non-na values:
-        imputedArray = Imputer(missing_values="NaN", strategy='mean').fit_transform(df)
-        
-        #df = pd.DataFrame(imputedArray, index=df.index, columns=df.columns)
-        #fill na
-        
-        return imputedArray
-    
-    #data transform, polynomial, log or exponential. etc.
-    def preprocessTransform(self, array):
-        
-        transArray = FunctionTransformer(log1p).fit_transform(array)
-
-        return transArray
-        
-    def preprocessScaler(self, array):
-        #Transforms features by scaling each feature to a given range.
-        # Standardize features by removing the mean and scaling to unit variance
-        stanScalerArray = StandardScaler().fit_transform(array)
-        #print("standard scaler: ", df.mean_)
-        #df = pd.DataFrame(scaled_features, index=df.index, columns=df.columns)
-
-        #Transforms features by scaling each feature to a given range.
-        rangeScalerArray = MinMaxScaler().fit_transform(stanScalerArray)
-        
-        return rangeScalerArray
-
-
-    #analyse and visualize data before training
-    def plotExploreDataPreTrain(self, df):
-        
-        '''
-        # specifies the parameters of our graphs
-        fig = plt.figure(figsize=(18,6), dpi=1600) 
-        alpha=alpha_scatterplot = 0.2 
-        alpha_bar_chart = 0.55
-        
-        #plot many diffrent shaped graphs together 
-        # distribution of histogram
-        print ("cnt: ", df["Purchase"].value_counts().sort_values())
-        ax1 = plt.subplot2grid((2,3),(0,0))
-        df.Purchase.value_counts().plot(figsize=(15,5))
-        ax1.set_xlim(-1, len(df.Purchase.value_counts()))
-        plt.title("Distribution of Purchase")
-        
-        plt.subplot2grid((2,3),(0,1))
-        df['Purchase'].plot(figsize=(15,5));
-
-
-        plt.subplot2grid((2,3),(0,2))
-        plt.scatter(df.Occupation, df.Purchase, alpha=alpha_scatterplot)
-        plt.ylabel("Purchase")
-        plt.show()
-        '''
-        
-        '''
-        print ("matplotlib.__version__: ", matplotlib.__version__)
-
-        df.plot(x='Age', y='Purchase', style = 'o')
-        plt.xlabel('Age')
-        plt.show()
-        
-        plt.figure()
-        plt.scatter(df['Occupation'], df['Purchase'])
-        plt.xlabel('Occupation')
-
-        plt.show()
-        '''
-        plt.figure()
-        #df['Purchase'].plot()
-
-        plt.hist(df['Purchase'], normed=True, bins=30)
-        plt.ylabel('Probability');
-
-        '''
-        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 10))
-        fig.subplots_adjust(hspace=1.0) ## Create space between plots
-        df.plot(x='Age', y='Purchase', ax = axes[0,0])
-        df.plot(x='Occupation', y='Purchase', ax = axes[0,1], style = 'o')
-        # Add titles
-        axes[0,0].set_title('Age')
-        axes[0,1].set_title('Occupation')
-        '''
-    
-    #analyse and visualize data after training; residualPlot
-    def plotResidualAfterTrain(self, y_pred, y_true):
-        #plot residual plot
-        plt.rcParams['agg.path.chunksize'] = 10000
-        #print ("len y_pred, y_true: ", len(y_pred), len(y_true))
-        #plt.scatter(x_test, y_test,  color='black')
-        plt.plot(y_pred, y_true-y_pred, color='blue', linewidth=3)  #
-        plt.show()
-        
-    #plot general figure common AfterTrain
-    def plotCommonAfterTrain(self, y_pred, y_true):
-        plt.scatter(y_true, y_pred)
-        plt.xlabel("True Values")
-        plt.ylabel("Predictions")
 
     #use data df to train general linear regression model;  data[-1] is the train ground truth y values
     def trainLinearRegModelData(self, df):
+        
         trainX = df.drop(['Purchase'], axis=1)         #inplace false all X data
         
         trainY = df.Purchase
         lm = LinearRegression(normalize=True, n_jobs=2)
 
         lm.fit(trainX, trainY)
-        print("Estimated intercept: ", lm.intercept_, "coeff len: ", len(lm.coef_))
+        print("Estimated intercept: ", trainX.shape, lm.intercept_, "coeff len: ", len(lm.coef_))
         
         #construct a data frame that contains features and estimated coefficients.
         featureCoeffDf = pd.DataFrame(list(zip(trainX.columns, lm.coef_)), columns = ["feature", "estimatedCoeffcients"])
@@ -293,7 +138,7 @@ class predictLR:
         print (" root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
 
         #plot residual
-        #self.plotExploreDataAfterTrain(y_pred, trainY)
+        #plotExploreDataAfterTrain(y_pred, trainY)
         
    
         #get mean squared error
@@ -301,9 +146,7 @@ class predictLR:
        # print (" after lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
         return lm
     
-    
-    #def train
-    
+        
      #use regularization lasso linear regression model;  data[-1] is the train ground truth y values
      #lasso does not work in this data, why?
     def trainLinearRegModelDataWithLasso(self, df):
@@ -312,7 +155,7 @@ class predictLR:
         
         trainY = df.Purchase
         
-             #cross validation
+        #cross validation
         #self.crossValidation(trainX, trainY, lm)t
         cf = self.crossValidationGridLasso(trainX, trainY)
         
@@ -335,7 +178,7 @@ class predictLR:
         print ("Lasso root means squared error: ", mean_squared_error(trainY, y_pred)**0.5)     # root mean squared error
 
         #plot residual
-        #self.plotExploreDataAfterTrain(y_pred, trainY)
+        #plotExploreDataAfterTrain(y_pred, trainY)
         
         return lmLasso
     
@@ -358,8 +201,8 @@ class predictLR:
          
         rmse_cv = np.sqrt(mean_squared_error(p, y))   #root mean square error
         print('RMSE on 5-fold CV: {:.2}'.format(rmse_cv))
-        #self.plotCommonAfterTrain(p, y)
-        #self.plotResidualAfterTrain(p, y)
+        #plotCommonAfterTrain(p, y)
+        #plotResidualAfterTrain(p, y)
         
     #lasso exhaustive grid cross validation ;  ElasticNet;  lasso could also help feature selection
     def crossValidationGridLasso(self, x, y):
