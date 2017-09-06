@@ -7,6 +7,7 @@ Created on Sun Sep  3 18:38:42 2017
 """
 
 #feature selection module
+#http://scikit-learn.org/stable/modules/feature_selection.html
 #show feature selection methods here
 import pandas as pd
 
@@ -15,6 +16,7 @@ from scipy.stats import pearsonr
 from itertools import combinations, chain
 from sklearn.metrics.cluster import normalized_mutual_info_score
 
+from sklearn.feature_selection import RFE
             
 #Filter use variance statistics to do feature selection, select ones bigger than bigger than threshold
 def featureSelectionFilterVariance01(df, threshold):
@@ -83,9 +85,8 @@ def featureSelectionFilterMutualInfo03(df, threshold):
 
     dfMI = pd.DataFrame.from_dict(correlations, orient='index')
     dfMI.columns = ['Normalized_Mutual_InfoScore']
-      
-    dfMI = dfMI[dfMI['Normalized_Mutual_InfoScore'] <= threshold]
     print ("featureSelectionFilterMutualInfo03 result2: ", dfMI)
+    dfMI = dfMI[dfMI['Normalized_Mutual_InfoScore'] <= threshold]
     
     colLsts = [f.split("__") for f in dfMI.index.tolist()]
     cols = list(set(chain(*colLsts)))
@@ -94,3 +95,8 @@ def featureSelectionFilterMutualInfo03(df, threshold):
     print("featureSelectionFilterMutualInfo03 final df: ", df.shape, df.columns)   #df['Purchase'])
     
     return df
+
+#based on RFE method; embedded
+def featureSelectionEmbeddedRFE(df, threshold):
+    x = 1
+    
