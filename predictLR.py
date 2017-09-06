@@ -115,7 +115,7 @@ class predictLR:
         
         print ("after feature selection df head3: ", df.shape, df.head())
 
-        featureSelectionFilterCorrelation02(df, 0.8)
+        df = featureSelectionFilterCorrelation02(df, 0.8)
         
         return df
     
