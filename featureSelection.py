@@ -13,7 +13,7 @@ import pandas as pd
 from sklearn.feature_selection import VarianceThreshold
 from scipy.stats import pearsonr
 from itertools import combinations, chain
-
+from sklearn.metrics.cluster import normalized_mutual_info_score
 
             
 #Filter use variance statistics to do feature selection, select ones bigger than bigger than threshold
@@ -36,7 +36,7 @@ def featureSelectionFilterVariance01(df, threshold):
 def featureSelectionFilterCorrelation02(df, threshold):
     #get column list
     # 1st calculate the feature pair; 2nd use X -> y;   df contains X and y
-    print ("featureSelectionFilterCorrelation02 df column", df.columns, len(df.columns))
+    print ("featureSelectionFilterCorrelation02 df column", len(df.columns))
     y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
     #dfX = df.iloc[:, :-1]      #create a view , not to delete;  df.drop(df.columns[[-1,]], axis=1, inplace=True)
     #df.drop(df.columns[[-1,]], axis=1, inplace=True) df.drop(df.index[2])
@@ -69,6 +69,28 @@ def featureSelectionFilterCorrelation02(df, threshold):
 #use mutual information to do feature selection.
 #calculate all feature pairs with normalized mutual information(NMI); too cost for big feature set
 #calculate feature vs predict value for regression model, filter too low NMI value
-def featureSelectionFilterMutualInfo03(df):
-    x = 1
+def featureSelectionFilterMutualInfo03(df, threshold):
+    print ("featureSelectionFilterMutualInfo03 df column", len(df.columns))
+    y = df.iloc[:,-1]          #df['Purchase']   df.iloc[:,-1] not probably the purchase  ycolumn
     
+    df.drop(df.columns[-1], axis=1, inplace=True)    #df.drop(df['Purchase'], axis=1, inplace=True)
+    
+    correlations = {}
+    columns = df.columns.tolist()
+    
+    for col_a, col_b in combinations(columns, 2):
+        correlations[col_a + '__' + col_b] = normalized_mutual_info_score(df.loc[:, col_a], df.loc[:, col_b])
+
+    dfMI = pd.DataFrame.from_dict(correlations, orient='index')
+    dfMI.columns = ['Normalized_Mutual_InfoScore']
+      
+    dfMI = dfMI[dfMI['Normalized_Mutual_InfoScore'] <= threshold]
+    print ("featureSelectionFilterMutualInfo03 result2: ", dfMI)
+    
+    colLsts = [f.split("__") for f in dfMI.index.tolist()]
+    cols = list(set(chain(*colLsts)))
+    print ("cols:    ", len(cols))
+    df = pd.concat([df[cols], y], axis=1)
+    print("featureSelectionFilterMutualInfo03 final df: ", df.shape, df.columns)   #df['Purchase'])
+    
+    return df
