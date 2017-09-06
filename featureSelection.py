@@ -97,11 +97,12 @@ def featureSelectionFilterMutualInfo03(df, threshold):
     return df
 
 def featureSelectionFilterKBest(df, k):
-    Y = df.iloc[:,-1]  
-    X = df.drop(df.columns[-1], axis=1, inplace=False)            # inplace=True)
+    X = df.drop(['Purchase'], axis=1)            # inplace=True)
+    Y = df['Purchase']                 #slicing create 2D list;
     
+    print ('featureSelectionFilterKBest: ', X.head(5), Y)
     XSelector= SelectKBest(chi2, k)
-    XSelector.fit_transform(X, Y)
+    XSelector.fit_transform(X.values, Y[:,])
     
     #df = pd.concat([df[cols], Y], axis=1)
     dfXNew = df.iloc[:, XSelector.get_support(indices=False)]
