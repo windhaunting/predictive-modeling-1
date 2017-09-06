@@ -17,7 +17,7 @@ from scipy.stats import pearsonr
 from itertools import combinations, chain
 from sklearn.metrics.cluster import normalized_mutual_info_score
 
-from sklearn.feature_selection import SelectKBest, chi2, RFE
+from sklearn.feature_selection import SelectKBest, chi2, f_regression, RFE
 
 #Filter use variance statistics to do feature selection, select ones bigger than bigger than threshold
 def featureSelectionFilterVariance01(df, threshold):
@@ -97,17 +97,19 @@ def featureSelectionFilterMutualInfo03(df, threshold):
     
     return df
 
-def featureSelectionFilterKBest(df, k):
+#wrapper select kbest using a function, such as chi2, f_regression to calculate x vs y
+def featureSelectionWrapperKBest(df, k):
     X = df.drop(['Purchase'], axis=1)            # inplace=True)
     Y = df['Purchase']                 #slicing create 2D list;
-    print ('featureSelectionFilterKBest: ', X.head(5), Y)
-    XSelector= SelectKBest(chi2, k)
-    XSelector.fit_transform(X.values, Y)
+    print ('featureSelectionWrapperKBest: ', X.head(5), Y.shape, Y.values[0])
+    '''
+    XSelector= SelectKBest(f_regression, k)
+    XSelector.fit_transform(X.values, Y.values)
     
     #df = pd.concat([df[cols], Y], axis=1)
     dfXNew = df.iloc[:, XSelector.get_support(indices=False)]
     df = pd.concat([dfXNew, Y], axis=1)
-
+    '''
     return df
 
 #based on RFE method; embedded
