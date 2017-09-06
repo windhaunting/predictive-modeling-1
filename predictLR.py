@@ -303,6 +303,7 @@ class predictLR:
     #def train
     
      #use regularization lasso linear regression model;  data[-1] is the train ground truth y values
+     #lasso does not work in this data, why?
     def trainLinearRegModelDataWithLasso(self, df):
                 
         trainX = df.drop(['Purchase'], axis=1)         #all X data
@@ -314,7 +315,7 @@ class predictLR:
         cf = self.crossValidationGridLasso(trainX, trainY)
         
         #after lasso feature selection
-        alpha = 0.1          # cf.best_params_['alpha']        
+        alpha = 0.1          # 0.2...1.  cf.best_params_['alpha']        
         
         lmLasso = Lasso(alpha = alpha, normalize=True)
 
@@ -416,7 +417,7 @@ def main():
     df = preLRObj.readPreprocessData(inputFile)
     #preLRObj.plotExploreDataPreTrain(df)
     #lm = preLRObj.trainLinearRegModelData(df)
-    #lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
+    lmLasso = preLRObj.trainLinearRegModelDataWithLasso(df)
     
     #test final test data
     #testInFile = "../input_data1/test.csv"
